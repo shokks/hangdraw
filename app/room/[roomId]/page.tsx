@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useCallback } from 'react';
+import { use, useCallback, useState, useEffect } from 'react';
 import { usePartyGame } from '@/hooks/usePartyGame';
 import { WaitingRoom } from '@/components/game/WaitingRoom';
 import { WordInput } from '@/components/game/WordInput';
@@ -9,6 +9,66 @@ import { AlphabetGrid } from '@/components/game/AlphabetGrid';
 import { HangmanFigure } from '@/components/game/HangmanFigure';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+
+const WAITING_MESSAGES = [
+  "Thinking of a word...",
+  "Hmm, what will it be?",
+  "Get ready to guess!",
+  "This is gonna be tricky...",
+  "Almost ready...",
+];
+
+const TIPS = [
+  "Tip: Start with common letters like E, A, R, T",
+  "Tip: Vowels are always a good guess!",
+  "Tip: Watch out for tricky words!",
+];
+
+function WaitingForWord({ opponentName }: { opponentName?: string }) {
+  const [messageIndex, setMessageIndex] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMessageIndex((i) => (i + 1) % WAITING_MESSAGES.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[70vh] animate-fade-in px-4">
+      {/* Empty gallows with swaying rope */}
+      <svg viewBox="0 0 200 220" className="w-32 h-40 sm:w-40 sm:h-48 mb-6">
+        {/* Gallows */}
+        <line x1="20" y1="200" x2="100" y2="200" stroke="#a8a29e" strokeWidth="3" strokeLinecap="round" />
+        <line x1="60" y1="200" x2="60" y2="20" stroke="#a8a29e" strokeWidth="3" strokeLinecap="round" />
+        <line x1="60" y1="20" x2="140" y2="20" stroke="#a8a29e" strokeWidth="3" strokeLinecap="round" />
+        <line x1="140" y1="20" x2="140" y2="50" stroke="#a8a29e" strokeWidth="3" strokeLinecap="round" />
+        {/* Swaying rope end */}
+        <g className="animate-sway" style={{ transformOrigin: '140px 20px' }}>
+          <line x1="140" y1="50" x2="140" y2="70" stroke="#a8a29e" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="140" cy="75" r="5" fill="none" stroke="#d6d3d1" strokeWidth="2" strokeDasharray="3 3" />
+        </g>
+      </svg>
+
+      {/* Opponent name */}
+      <p className="text-lg sm:text-xl font-display font-bold text-stone-700 mb-2">
+        {opponentName || 'Friend'}
+      </p>
+      
+      {/* Rotating message */}
+      <p className="text-stone-400 text-sm animate-pulse transition-all">
+        {WAITING_MESSAGES[messageIndex]}
+      </p>
+      
+      {/* Tip */}
+      <div className="mt-8 px-4 py-3 bg-stone-100 rounded-xl max-w-xs">
+        <p className="text-xs text-stone-500 text-center">
+          {TIPS[Math.floor(messageIndex / 2) % TIPS.length]}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function RoomPage({ params }: { params: Promise<{ roomId: string }> }) {
   const { roomId } = use(params);
@@ -83,12 +143,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
         )}
 
         {phase === 'word-setting' && isGuesser && (
-          <div className="flex items-center justify-center min-h-[70vh]">
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-stone-100 animate-pulse" />
-              <p className="text-stone-400">Waiting for word...</p>
-            </div>
-          </div>
+          <WaitingForWord opponentName={opponent?.name} />
         )}
 
         {(phase === 'playing' || phase === 'drawing' || phase === 'game-over') && (
