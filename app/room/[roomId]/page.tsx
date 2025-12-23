@@ -96,12 +96,12 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
             {/* Minimal score display */}
             <div className="flex items-center justify-center gap-8 mb-8 text-sm">
               <div className="text-center">
-                <p className="text-stone-400 text-xs mb-1">{me?.name || 'You'}</p>
+                <p className="text-stone-400 text-xs mb-1">You</p>
                 <p className="font-display text-2xl font-bold text-stone-800">{me?.score || 0}</p>
               </div>
-              <span className="text-stone-300">—</span>
+              <span className="text-xs text-stone-300 font-display">vs</span>
               <div className="text-center">
-                <p className="text-stone-400 text-xs mb-1">{opponent?.name || 'Opponent'}</p>
+                <p className="text-stone-400 text-xs mb-1">{opponent?.name || '?'}</p>
                 <p className="font-display text-2xl font-bold text-stone-800">{opponent?.score || 0}</p>
               </div>
             </div>
