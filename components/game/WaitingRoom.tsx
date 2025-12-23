@@ -21,14 +21,26 @@ export function WaitingRoom({ roomCode, players, onStartGame, isHost }: WaitingR
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const bothPlayersReady = players.length === 2;
+
   return (
     <div className="flex flex-col items-center gap-8 p-8 animate-fade-in">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-foreground mb-2">
-          Waiting for Players
+          {bothPlayersReady 
+            ? 'Ready to Play!' 
+            : isHost 
+              ? 'Waiting for Opponent' 
+              : 'Joining Game...'}
         </h2>
         <p className="text-muted-foreground">
-          Share the room link with a friend to start playing
+          {bothPlayersReady
+            ? isHost 
+              ? 'Both players are here. Start the game!'
+              : 'Waiting for host to start the game...'
+            : isHost
+              ? 'Share the room link with a friend'
+              : 'Connected! Waiting for another player...'}
         </p>
       </div>
 
@@ -69,7 +81,7 @@ export function WaitingRoom({ roomCode, players, onStartGame, isHost }: WaitingR
         </div>
       </div>
 
-      {players.length === 2 && isHost && onStartGame && (
+      {bothPlayersReady && isHost && onStartGame && (
         <Button
           onClick={onStartGame}
           size="lg"
@@ -77,6 +89,12 @@ export function WaitingRoom({ roomCode, players, onStartGame, isHost }: WaitingR
         >
           Start Game
         </Button>
+      )}
+
+      {bothPlayersReady && !isHost && (
+        <p className="text-sm text-muted-foreground animate-pulse">
+          Waiting for host to start...
+        </p>
       )}
     </div>
   );
