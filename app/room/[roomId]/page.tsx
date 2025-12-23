@@ -132,21 +132,23 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
               </div>
 
               {/* Role indicator with waiting animation */}
-              <p className="text-xs text-stone-400">
-                {isWordSetter ? (
-                  phase === 'drawing' ? (
-                    'Click the figure to draw'
-                  ) : (
+              {isWordSetter && phase === 'drawing' ? (
+                <p className="text-sm font-medium text-orange-600 animate-pulse">
+                  Tap the blinking body part to draw!
+                </p>
+              ) : (
+                <p className="text-xs text-stone-400">
+                  {isWordSetter ? (
                     <span className="animate-dots">Waiting for guess</span>
-                  )
-                ) : (
-                  phase === 'drawing' ? (
-                    <span className="animate-dots">Opponent is drawing</span>
                   ) : (
-                    'Your turn to guess'
-                  )
-                )}
-              </p>
+                    phase === 'drawing' ? (
+                      <span className="animate-dots">Opponent is drawing</span>
+                    ) : (
+                      'Your turn to guess'
+                    )
+                  )}
+                </p>
+              )}
 
               {/* Alphabet grid - only for guesser */}
               {isGuesser && (

@@ -154,6 +154,11 @@ body {
   50% { transform: rotate(3deg); }
 }
 
+@keyframes blink {
+  0%, 100% { opacity: 1; stroke-width: 6; }
+  50% { opacity: 0.4; stroke-width: 4; }
+}
+
 @keyframes dots {
   0%, 20% { content: ''; }
   40% { content: '.'; }
