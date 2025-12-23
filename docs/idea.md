@@ -1,0 +1,1 @@
+Create a simple hangman game in which 2 players can join and play hangman word game using tldraw as backend and nextjs.
