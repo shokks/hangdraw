@@ -61,7 +61,7 @@ Based on [PRD: HangDraw](./prd-hangman-game.md)
   - [x] 3.4 Build `AlphabetGrid.tsx` - clickable A-Z grid with disabled state for used letters
   - [x] 3.5 Build `StatusBar.tsx` - displays current role, turn status, wrong guess count
   - [x] 3.6 Build `ScoreBoard.tsx` - shows "Player 1: X | Player 2: Y" score
-  - [ ] 3.7 Create `hooks/useGameState.ts` with mock game state for UI testing
+  - [x] 3.7 Create `hooks/useGameState.ts` with mock game state for UI testing
   - [x] 3.8 Compose components in room page and test full UI layout
 
 - [x] 4.0 Implement clickable SVG hangman figure
@@ -94,13 +94,13 @@ Based on [PRD: HangDraw](./prd-hangman-game.md)
   - [x] 6.7 Added visual distinction for player roles (violet/sky badges)
   - [x] 6.8 Added Space Mono + DM Sans fonts, design system colors
 
-- [ ] 7.0 Testing, review, and deployment
-  - [ ] 7.1 Test complete game flow: create room → join → set word → guess → win/lose → swap roles
-  - [ ] 7.2 Test multiple rounds with score tracking
-  - [ ] 7.3 Test edge cases: invalid words, rapid clicking, browser refresh
-  - [ ] 7.4 Test on Chrome, Firefox, Safari (desktop)
-  - [ ] 7.5 Deploy preview build for user review
-  - [ ] 7.6 Demo feature and get user approval
-  - [ ] 7.7 Create PR and merge to main
-  - [ ] 7.8 Verify production deployment
-  - [ ] 7.9 Delete feature branch
+- [x] 7.0 Testing, review, and deployment
+  - [x] 7.1 Test complete game flow: create room → join → set word → guess → win/lose → swap roles
+  - [x] 7.2 Test multiple rounds with score tracking
+  - [x] 7.3 Test edge cases: invalid words, rapid clicking, browser refresh
+  - [x] 7.4 Test on Chrome, Firefox, Safari (desktop)
+  - [x] 7.5 Deploy preview build for user review
+  - [x] 7.6 Demo feature and get user approval
+  - [x] 7.7 Create PR and merge to main
+  - [x] 7.8 Verify production deployment
+  - [x] 7.9 Delete feature branch
