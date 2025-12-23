@@ -48,7 +48,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   // Loading state
   if (!isConnected || !gameState) {
     return (
-      <div className="bg-stone-50 flex items-center justify-center min-h-[calc(100vh-6.5rem)]">
+      <div className="bg-stone-50 flex items-center justify-center min-h-[calc(100vh-6.5rem)] px-4">
         <div className="text-center">
           <div className="w-10 h-10 mx-auto mb-4 rounded-full border-3 border-stone-200 border-t-orange-500 animate-spin" />
           <p className="text-stone-400 text-sm">Connecting...</p>
@@ -58,10 +58,10 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   }
 
   return (
-    <div className="bg-stone-50 p-4">
+    <div className="bg-stone-50 p-3 sm:p-4 min-h-[calc(100vh-6.5rem)]">
       <div className="max-w-4xl mx-auto">
         {/* Room code indicator */}
-        <div className="flex items-center justify-end gap-2 mb-4">
+        <div className="flex items-center justify-end gap-2 mb-3 sm:mb-4">
           <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
           <span className="font-display text-xs text-stone-400 tracking-widest">{roomId}</span>
         </div>
@@ -94,20 +94,20 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
         {(phase === 'playing' || phase === 'drawing' || phase === 'game-over') && (
           <div className="animate-fade-in">
             {/* Minimal score display */}
-            <div className="flex items-center justify-center gap-8 mb-8 text-sm">
+            <div className="flex items-center justify-center gap-6 sm:gap-8 mb-6 sm:mb-8 text-sm">
               <div className="text-center">
                 <p className="text-stone-400 text-xs mb-1">You</p>
-                <p className="font-display text-2xl font-bold text-stone-800">{me?.score || 0}</p>
+                <p className="font-display text-xl sm:text-2xl font-bold text-stone-800">{me?.score || 0}</p>
               </div>
               <span className="text-xs text-stone-300 font-display">vs</span>
               <div className="text-center">
                 <p className="text-stone-400 text-xs mb-1">{opponent?.name || '?'}</p>
-                <p className="font-display text-2xl font-bold text-stone-800">{opponent?.score || 0}</p>
+                <p className="font-display text-xl sm:text-2xl font-bold text-stone-800">{opponent?.score || 0}</p>
               </div>
             </div>
 
             {/* Main game area - clean layout */}
-            <div className="flex flex-col items-center gap-8">
+            <div className="flex flex-col items-center gap-5 sm:gap-8">
               {/* Word display - word-setter sees full word with green for guessed */}
               <WordDisplay
                 word={word}
@@ -118,7 +118,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
 
               {/* Hangman figure with soft shadow */}
               <div 
-                className="bg-white rounded-2xl p-6"
+                className="bg-white rounded-2xl p-4 sm:p-6"
                 style={{ boxShadow: '0 -4px 20px -4px rgba(0,0,0,0.08), 0 4px 20px -4px rgba(0,0,0,0.08)' }}
               >
                 <HangmanFigure

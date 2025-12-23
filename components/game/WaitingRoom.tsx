@@ -32,13 +32,13 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in px-4">
       {/* Room code - the focal point */}
       <div 
-        className="bg-white rounded-2xl px-12 py-8"
+        className="bg-white rounded-2xl px-8 py-6 sm:px-12 sm:py-8"
         style={{ boxShadow: '0 -4px 20px -4px rgba(0,0,0,0.08), 0 4px 20px -4px rgba(0,0,0,0.08)' }}
       >
-        <p className="text-5xl font-display font-bold tracking-[0.4em] text-stone-800 text-center">
+        <p className="text-3xl sm:text-5xl font-display font-bold tracking-[0.3em] sm:tracking-[0.4em] text-stone-800 text-center">
           {roomCode}
         </p>
       </div>

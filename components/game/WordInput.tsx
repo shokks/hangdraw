@@ -38,15 +38,15 @@ export function WordInput({ onSubmit }: WordInputProps) {
   };
 
   return (
-    <Card className="w-full max-w-sm animate-slide-up">
-      <CardHeader className="text-center">
-        <CardTitle>Set the Secret Word</CardTitle>
-        <CardDescription>
+    <Card className="w-full max-w-sm mx-4 sm:mx-0 animate-slide-up">
+      <CardHeader className="text-center px-4 sm:px-6">
+        <CardTitle className="text-lg sm:text-xl">Set the Secret Word</CardTitle>
+        <CardDescription className="text-sm">
           Enter a word for your opponent to guess (3-15 letters)
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <CardContent className="px-4 sm:px-6">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4">
           <Input
             type="text"
             value={word}
@@ -56,8 +56,10 @@ export function WordInput({ onSubmit }: WordInputProps) {
             }}
             placeholder="Enter word..."
             maxLength={15}
-            className="h-14 text-center text-2xl font-display tracking-widest"
+            className="h-12 sm:h-14 text-center text-xl sm:text-2xl font-display tracking-widest"
             autoFocus
+            autoComplete="off"
+            autoCapitalize="characters"
           />
           
           {error && (

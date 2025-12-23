@@ -31,15 +31,15 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 bg-stone-50 min-h-[calc(100vh-6.5rem)]">
-      <div className="flex flex-col items-center gap-10 max-w-md w-full animate-fade-in">
+    <div className="flex flex-col items-center justify-center p-6 sm:p-8 bg-stone-50 min-h-[calc(100vh-5.5rem)] sm:min-h-[calc(100vh-6.5rem)]">
+      <div className="flex flex-col items-center gap-8 sm:gap-10 max-w-md w-full animate-fade-in">
         <div className="text-center">
-          <p className="text-lg text-stone-500">
+          <p className="text-base sm:text-lg text-stone-500">
             Multiplayer Hangman with a twist
           </p>
         </div>
 
-        <div className="flex flex-col gap-4 w-full max-w-xs">
+        <div className="flex flex-col gap-3 sm:gap-4 w-full max-w-xs">
           <Button
             onClick={handleCreateGame}
             size="lg"

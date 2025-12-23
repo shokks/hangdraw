@@ -24,6 +24,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Saikat", url: "https://twitter.com/5aikat" }],
   creator: "Saikat",
   metadataBase: new URL("https://hangdraw.vercel.app"),
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   openGraph: {
     title: "HangDraw - Multiplayer Hangman",
     description: "A fun two-player hangman game with real-time drawing. Challenge your friends!",
@@ -65,7 +66,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${spaceMono.variable} ${dmSans.variable} antialiased`}>
         <Header />
-        <main className="pt-14 pb-12 min-h-screen">
+        <main className="pt-12 sm:pt-14 pb-10 sm:pb-12 min-h-screen">
           {children}
         </main>
         <Footer />

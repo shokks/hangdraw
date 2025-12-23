@@ -42,7 +42,7 @@ export function HangmanFigure({ wrongGuesses, isDrawingPhase, canDraw, onPartCli
   };
 
   return (
-    <svg viewBox="0 0 200 250" className="w-48 h-60">
+    <svg viewBox="0 0 200 250" className="w-36 h-44 sm:w-48 sm:h-60">
       {/* Gallows - subtle */}
       <line x1="20" y1="230" x2="100" y2="230" stroke="#a8a29e" strokeWidth="2" strokeLinecap="round" />
       <line x1="60" y1="230" x2="60" y2="20" stroke="#a8a29e" strokeWidth="2" strokeLinecap="round" />
