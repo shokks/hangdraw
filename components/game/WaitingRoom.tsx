@@ -7,11 +7,12 @@ import { Button } from '@/components/ui/button';
 interface WaitingRoomProps {
   roomCode: string;
   players: Player[];
+  currentPlayerId?: string;
   onStartGame?: () => void;
   isHost?: boolean;
 }
 
-export function WaitingRoom({ roomCode, players, onStartGame, isHost }: WaitingRoomProps) {
+export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, isHost }: WaitingRoomProps) {
   const [copied, setCopied] = useState(false);
   const bothPlayersReady = players.length === 2;
 
@@ -39,28 +40,42 @@ export function WaitingRoom({ roomCode, players, onStartGame, isHost }: WaitingR
         {copied ? '✓ Link copied!' : 'Tap to copy invite link'}
       </p>
 
-      {/* Players indicator */}
-      <div className="flex items-center gap-3 mt-10">
-        <div className={`w-3 h-3 rounded-full ${players.length >= 1 ? 'bg-orange-500' : 'bg-stone-200'}`} />
-        <div className={`w-3 h-3 rounded-full ${players.length >= 2 ? 'bg-orange-500' : 'bg-stone-200 animate-pulse'}`} />
+      {/* Versus display */}
+      <div className="flex items-center gap-6 mt-12">
+        {/* Player 1 */}
+        <div className="text-center">
+          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 1 ? 'bg-orange-500' : 'bg-stone-200'}`} />
+          {players[0] ? (
+            <p className="text-sm font-medium text-stone-700">
+              {players[0].id === currentPlayerId ? 'You' : players[0].name}
+            </p>
+          ) : (
+            <p className="text-sm text-stone-300">—</p>
+          )}
+        </div>
+
+        {/* VS */}
+        <span className="text-xs font-display text-stone-300 tracking-wider">vs</span>
+
+        {/* Player 2 */}
+        <div className="text-center">
+          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 2 ? 'bg-orange-500' : 'bg-stone-200 animate-pulse'}`} />
+          {players[1] ? (
+            <p className="text-sm font-medium text-stone-700">
+              {players[1].id === currentPlayerId ? 'You' : players[1].name}
+            </p>
+          ) : (
+            <p className="text-sm text-stone-300 animate-pulse">?</p>
+          )}
+        </div>
       </div>
 
       {/* Status text */}
-      <p className="text-sm text-stone-400 mt-3">
+      <p className="text-xs text-stone-400 mt-6">
         {bothPlayersReady
-          ? isHost ? 'Ready!' : 'Waiting for host...'
-          : isHost ? 'Share link to invite' : 'Waiting for opponent...'}
+          ? isHost ? 'Ready to play!' : 'Waiting for host...'
+          : isHost ? 'Share link to invite opponent' : 'Waiting for opponent...'}
       </p>
-
-      {/* Player names */}
-      <div className="flex items-center gap-4 mt-6 text-sm">
-        {players.map((player, i) => (
-          <span key={player.id} className="text-stone-600">
-            {player.name}
-            {i === 0 && <span className="text-stone-300 ml-1">(host)</span>}
-          </span>
-        ))}
-      </div>
 
       {/* Start button - only for host when ready */}
       {bothPlayersReady && isHost && onStartGame && (

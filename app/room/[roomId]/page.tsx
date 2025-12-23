@@ -70,6 +70,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
           <WaitingRoom
             roomCode={roomId}
             players={players}
+            currentPlayerId={playerId}
             onStartGame={actions.startGame}
             isHost={players.length > 0 && players[0].id === playerId}
           />
