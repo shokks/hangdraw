@@ -148,15 +148,13 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
                 </p>
               )}
 
-              {/* Alphabet grid - only for guesser */}
-              {isGuesser && (
-                <AlphabetGrid
-                  guessedLetters={guessedLetters}
-                  correctLetters={revealedLetters}
-                  onGuess={actions.guess}
-                  disabled={phase !== 'playing'}
-                />
-              )}
+              {/* Alphabet grid - interactive for guesser, read-only for word-setter */}
+              <AlphabetGrid
+                guessedLetters={guessedLetters}
+                correctLetters={revealedLetters}
+                onGuess={actions.guess}
+                disabled={!isGuesser || phase !== 'playing'}
+              />
 
               {/* Remaining guesses - minimal */}
               <div className="flex gap-1.5">

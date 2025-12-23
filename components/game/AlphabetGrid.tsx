@@ -25,12 +25,12 @@ export function AlphabetGrid({ guessedLetters, correctLetters, onGuess, disabled
               w-8 h-9 rounded-lg font-display font-medium text-sm transition-all
               ${isGuessed 
                 ? isCorrect 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-stone-200 text-stone-400 line-through'
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-rose-100 text-rose-400 line-through'
                 : 'bg-white text-stone-600 hover:bg-primary/10 hover:text-primary hover:scale-105'
               }
-              ${disabled && !isGuessed ? 'opacity-30 cursor-not-allowed' : ''}
-              ${isGuessed ? 'cursor-not-allowed' : 'cursor-pointer'}
+              ${disabled && !isGuessed ? 'opacity-50 cursor-default' : ''}
+              ${isGuessed || disabled ? 'cursor-default' : 'cursor-pointer'}
             `}
           >
             {letter}
