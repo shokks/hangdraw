@@ -1,6 +1,7 @@
 'use client';
 
-import { use, useCallback, useState, useEffect } from 'react';
+import { use, useCallback, useState, useEffect, useRef } from 'react';
+import confetti from 'canvas-confetti';
 import { usePartyGame } from '@/hooks/usePartyGame';
 import { WaitingRoom } from '@/components/game/WaitingRoom';
 import { WordInput } from '@/components/game/WordInput';
@@ -152,6 +153,20 @@ function GameRoom({ roomId }: { roomId: string }) {
   const opponent = players.find(p => p.id !== playerId);
   const me = players.find(p => p.id === playerId);
 
+  // Fire confetti when player wins
+  const hasShownConfetti = useRef(false);
+  useEffect(() => {
+    if (isGameOver && iWon && !hasShownConfetti.current) {
+      hasShownConfetti.current = true;
+      // Burst from both sides
+      confetti({ particleCount: 80, spread: 70, origin: { x: 0.2, y: 0.6 } });
+      confetti({ particleCount: 80, spread: 70, origin: { x: 0.8, y: 0.6 } });
+    }
+    if (!isGameOver) {
+      hasShownConfetti.current = false;
+    }
+  }, [isGameOver, iWon]);
+
   // Loading state
   if (!isConnected || !gameState) {
     return (
@@ -296,14 +311,16 @@ function GameRoom({ roomId }: { roomId: string }) {
             <Dialog open={isGameOver}>
               <DialogContent className="sm:max-w-sm text-center border-0 shadow-2xl">
                 <DialogHeader className="text-center pt-4">
-                  <DialogTitle className={`text-2xl font-display font-bold ${iWon ? 'text-green-600' : 'text-orange-500'}`}>
-                    {iWon ? 'You Win!' : 'You Lose'}
+                  <DialogTitle className={`text-3xl font-display font-bold ${iWon ? 'text-green-600' : 'text-stone-600'}`}>
+                    {iWon ? '🎉 You Won!' : 'So Close!'}
                   </DialogTitle>
-                  <DialogDescription className="text-stone-400">
-                    {didGuesserWin ? 'Word guessed correctly' : 'Out of guesses'}
+                  <DialogDescription className="text-stone-400 mt-1">
+                    {iWon 
+                      ? 'Great job!' 
+                      : "You'll get them next time!"}
                   </DialogDescription>
                 </DialogHeader>
-                <div className="py-6">
+                <div className="py-4">
                   <p className="text-xs text-stone-400 mb-2 uppercase tracking-wider">The word was</p>
                   <p className="text-3xl font-display font-bold text-stone-800 tracking-widest">
                     {word}
