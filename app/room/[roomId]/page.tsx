@@ -108,11 +108,12 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
 
             {/* Main game area - clean layout */}
             <div className="flex flex-col items-center gap-8">
-              {/* Word display - word-setter sees full word */}
+              {/* Word display - word-setter sees full word with green for guessed */}
               <WordDisplay
                 word={word}
-                revealedLetters={isWordSetter ? word.toUpperCase().split('') : revealedLetters}
+                revealedLetters={revealedLetters}
                 gameOver={isGameOver}
+                showAsWordSetter={isWordSetter}
               />
 
               {/* Hangman figure with soft shadow */}
@@ -148,13 +149,33 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
                 </p>
               )}
 
-              {/* Alphabet grid - interactive for guesser, read-only for word-setter */}
-              <AlphabetGrid
-                guessedLetters={guessedLetters}
-                correctLetters={revealedLetters}
-                onGuess={actions.guess}
-                disabled={!isGuesser || phase !== 'playing'}
-              />
+              {/* Alphabet grid for guesser, wrong guesses list for word-setter */}
+              {isGuesser ? (
+                <AlphabetGrid
+                  guessedLetters={guessedLetters}
+                  correctLetters={revealedLetters}
+                  onGuess={actions.guess}
+                  disabled={phase !== 'playing'}
+                />
+              ) : (
+                wrongGuesses > 0 && (
+                  <div className="text-center">
+                    <p className="text-xs text-stone-400 mb-2">Wrong guesses</p>
+                    <div className="flex gap-2 justify-center">
+                      {guessedLetters
+                        .filter(l => !revealedLetters.includes(l))
+                        .map(letter => (
+                          <span
+                            key={letter}
+                            className="w-8 h-9 flex items-center justify-center rounded-lg bg-rose-100 text-rose-500 font-display font-medium text-sm"
+                          >
+                            {letter}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+                )
+              )}
 
               {/* Remaining guesses - minimal */}
               <div className="flex gap-1.5">
@@ -162,7 +183,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
                   <div
                     key={i}
                     className={`w-2 h-2 rounded-full transition-colors ${
-                      i < (6 - wrongGuesses) ? 'bg-stone-300' : 'bg-orange-500'
+                      i < (6 - wrongGuesses) ? 'bg-stone-300' : 'bg-rose-500'
                     }`}
                   />
                 ))}
