@@ -2,19 +2,19 @@
 
 ## 1. Introduction/Overview
 
-HangDraw is a two-player online hangman game that combines the classic word-guessing game with collaborative drawing using tldraw. One player sets a secret word while the other guesses letters. The twist: instead of pre-made hangman graphics, the word-setter manually draws hangman parts on a shared canvas whenever the guesser makes a wrong guess.
+HangDraw is a two-player online hangman game with a twist: the word-setter manually draws hangman body parts by clicking on an interactive SVG figure. One player sets a secret word while the other guesses letters. When the guesser makes a wrong guess, the word-setter taps the blinking body part to "draw" it, adding suspense and interactivity.
 
-**Problem Solved:** Traditional hangman games are either single-player or lack the creative, interactive element of watching your opponent draw your doom in real-time.
+**Problem Solved:** Traditional hangman games are either single-player or use static pre-made graphics. HangDraw makes drawing the hangman an interactive, real-time experience between two players.
 
-**Tech Stack:** Next.js frontend with tldraw for the collaborative drawing backend.
+**Tech Stack:** Next.js (App Router), PartyKit for real-time sync, shadcn/ui components, Tailwind CSS.
 
 ## 2. Goals
 
 1. Create a fun, real-time two-player hangman experience
-2. Leverage tldraw's collaborative canvas for manual hangman drawing
-3. Enable frictionless game joining via shareable room links
-4. Provide a polished MVP with win/loss tracking and simple animations
-5. Deliver a desktop-optimized experience
+2. Interactive hangman drawing via clickable SVG body parts
+3. Enable frictionless game joining via shareable 4-character room codes
+4. Provide a polished MVP with win/loss tracking, score display, and animations
+5. Deliver a desktop-optimized experience with minimal, playful UI
 
 ## 3. User Stories
 
@@ -31,7 +31,7 @@ HangDraw is a two-player online hangman game that combines the classic word-gues
 > As the guesser, I want to select letters to guess and see immediately if they're correct so I can try to solve the word.
 
 ### US-5: Drawing the Hangman
-> As the word-setter, I want to draw parts of the hangman on the shared canvas when my opponent guesses wrong, adding a creative/personal element to the game.
+> As the word-setter, I want to tap on blinking body parts to draw the hangman when my opponent guesses wrong, adding interactivity and suspense to the game.
 
 ### US-6: Winning/Losing
 > As a player, I want to see clear win/loss states with animations so the outcome feels satisfying.
@@ -62,12 +62,12 @@ HangDraw is a two-player online hangman game that combines the classic word-gues
 11. **FR-11:** The system must notify the word-setter to draw when a wrong guess is made
 12. **FR-12:** The system must track wrong guesses (max 6 before game over)
 
-### Drawing (tldraw Integration)
-13. **FR-13:** The system must display a shared tldraw canvas visible to both players
-14. **FR-14:** Only the word-setter can draw on the canvas during their drawing turn
-15. **FR-15:** The guesser must see the drawing appear in real-time
-16. **FR-16:** The system should prompt/guide the word-setter on what body part to draw (head, body, arms, legs)
-17. **FR-17:** The canvas must reset between rounds
+### Drawing (Clickable SVG Hangman)
+13. **FR-13:** The system must display an interactive SVG hangman figure visible to both players
+14. **FR-14:** Body parts appear as gray dashed placeholders initially
+15. **FR-15:** The next drawable part blinks in orange (word-setter only) during drawing phase
+16. **FR-16:** Word-setter clicks the blinking part to "draw" it (turns solid red)
+17. **FR-17:** Guesser sees parts appear in real-time as word-setter draws them
 
 ### Win/Loss Conditions
 18. **FR-18:** The guesser wins if they complete the word before 6 wrong guesses
@@ -93,49 +93,67 @@ HangDraw is a two-player online hangman game that combines the classic word-gues
 
 ## 6. Design Considerations
 
-### Layout (Desktop)
+### Layout (Desktop - Single Column Centered)
 ```
 +------------------------------------------+
-|  HangDraw          Room: ABC123    Score |
+|  [Logo] HangDraw                         |
 +------------------------------------------+
-|                    |                     |
-|   tldraw Canvas    |    Word Display     |
-|   (Drawing Area)   |    _ _ A _ _ E      |
-|                    |                     |
-|                    |    Alphabet Grid    |
-|                    |    [A][B][C]...     |
-|                    |                     |
+|                                          |
+|           You  0  vs  0  Opponent        |
+|                                          |
+|            _ _ A _ _ E                   |
+|           (Word Display)                 |
+|                                          |
+|         +------------------+             |
+|         |   SVG Hangman    |             |
+|         |  (clickable)     |             |
+|         +------------------+             |
+|                                          |
+|      [A][B][C][D][E][F][G][H][I]         |
+|      [J][K][L][M][N][O][P][Q][R]         |
+|      [S][T][U][V][W][X][Y][Z]            |
+|                                          |
+|              ● ● ● ○ ○ ○                 |
+|         (remaining guesses)              |
+|                                          |
 +------------------------------------------+
-|            Status: Your turn to guess    |
+|           Made by @5aikat                |
 +------------------------------------------+
 ```
 
-### UI Elements
-- Clean, minimal interface
-- Clear visual distinction between player roles
-- Disabled/used letters should be visually distinct
-- Win/loss states should have celebratory/consolation animations
-- Loading/waiting states for async operations
+### UI Elements (Implemented)
+- **Playful Minimalism** design system with Space Mono + DM Sans fonts
+- Single-column centered layout with soft shadows
+- "You vs Opponent" competitive framing for score display
+- Correct guesses: green in alphabet grid, green letters for word-setter's word view
+- Wrong guesses: rose/red with strikethrough, compact list for word-setter
+- Clickable SVG hangman with blinking animation (6px stroke) for next part
+- Sway animation (3 degrees) on hangman during gameplay
+- shadcn/ui components (Button, Input, Card, Dialog, Badge)
+- CSS variables for theming (--primary = orange)
 
 ## 7. Technical Considerations
 
-### tldraw Integration
-- Use tldraw's multiplayer/collaboration features for real-time canvas sync
-- Consider tldraw's sync protocol or yjs for state management
-- Canvas permissions: toggle drawing ability based on game state
+### Clickable SVG Hangman
+- 6 body parts: head, body, left arm, right arm, left leg, right leg
+- States: placeholder (gray dashed) → blinking (orange, word-setter only) → drawn (solid red)
+- Click handler only active for word-setter during drawing phase
 
-### Real-time Communication
-- WebSocket or similar for game state synchronization
-- Consider: tldraw's built-in sync, Liveblocks, Partykit, or custom WebSocket server
+### Real-time Communication (PartyKit)
+- PartyKit server (`party/index.ts`) handles WebSocket connections
+- Game state synced via JSON messages
+- `usePartyGame` hook manages connection, state, and actions
+- Environment variable: `NEXT_PUBLIC_PARTYKIT_HOST`
 
 ### State Management
-- Game state: room code, players, current round, scores, word, guesses, whose turn
-- Sync state between both clients in real-time
+- Game state: room code, players, current round, scores, word, guesses, phase
+- Phases: waiting → word-setting → drawing → playing → game-over
+- Player roles: word-setter and guesser, swap after each round
 
-### Next.js Considerations
-- App Router for routing
-- Server actions or API routes for room creation
-- Client components for interactive game elements
+### Next.js Implementation
+- App Router with dynamic room routes (`/room/[roomId]`)
+- Client components for all interactive game elements
+- 4-character alphanumeric room codes (excluding confusing characters)
 
 ## 8. Success Metrics
 
@@ -144,15 +162,15 @@ HangDraw is a two-player online hangman game that combines the classic word-gues
 3. **Usability:** New players can start a game within 30 seconds of landing on the site
 4. **Engagement:** Average session includes 3+ rounds (indicating fun factor)
 
-## 9. Open Questions
+## 9. Future Enhancements
 
-1. **Room expiration:** How long should inactive rooms persist? (Suggest: 1 hour)
-2. **Reconnection:** What happens if a player disconnects mid-game? (Suggest: 60s reconnect window)
-3. **Word source:** Should we offer an optional random word generator for faster play?
-4. **Drawing guidance:** How prescriptive should we be about what to draw? (Strict body parts vs. free drawing)
-5. **Best-of format:** Should matches be best-of-3, best-of-5, or unlimited rounds?
+1. **Mobile/tablet support** - Responsive design for smaller screens
+2. **Reconnection handling** - Allow players to rejoin if disconnected
+3. **Random word generator** - Optional feature for faster play
+4. **Sound effects** - Audio feedback for guesses and game events
+5. **Chat functionality** - In-game messaging between players
 
 ---
 
 *Document created: December 23, 2025*  
-*Status: Draft - Pending Development*
+*Status: ✅ MVP Complete - Deployed to Production*
