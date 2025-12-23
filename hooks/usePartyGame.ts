@@ -35,6 +35,8 @@ interface UsePartyGameReturn {
   isWordSetter: boolean;
   isGuesser: boolean;
   isConnected: boolean;
+  playerLeft: string | null; // Name of player who left
+  clearPlayerLeft: () => void;
   actions: {
     join: () => void;
     startGame: () => void;
@@ -48,6 +50,7 @@ interface UsePartyGameReturn {
 export function usePartyGame({ roomId }: UsePartyGameOptions): UsePartyGameReturn {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [playerLeft, setPlayerLeft] = useState<string | null>(null);
   const playerIdRef = useRef<string>('');
   const playerNameRef = useRef<string>('');
   const hasJoinedRef = useRef(false);
@@ -83,6 +86,9 @@ export function usePartyGame({ roomId }: UsePartyGameOptions): UsePartyGameRetur
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'sync' && data.state) {
+          setGameState(data.state);
+        } else if (data.type === 'player-left') {
+          setPlayerLeft(data.playerName);
           setGameState(data.state);
         }
       } catch (e) {
@@ -128,6 +134,10 @@ export function usePartyGame({ roomId }: UsePartyGameOptions): UsePartyGameRetur
     socket.send(JSON.stringify({ type: 'play-again' }));
   }, [socket]);
 
+  const clearPlayerLeft = useCallback(() => {
+    setPlayerLeft(null);
+  }, []);
+
   // Derived state
   const playerId = playerIdRef.current;
   const currentPlayer = gameState?.players.find(p => p.id === playerId) || null;
@@ -141,6 +151,8 @@ export function usePartyGame({ roomId }: UsePartyGameOptions): UsePartyGameRetur
     isWordSetter,
     isGuesser,
     isConnected,
+    playerLeft,
+    clearPlayerLeft,
     actions: {
       join,
       startGame,

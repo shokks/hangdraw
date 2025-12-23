@@ -51,6 +51,7 @@ function createInitialGameState(roomId: string): GameState {
 
 export default class HangDrawServer implements Party.Server {
   gameState: GameState;
+  connectionToPlayer: Map<string, string> = new Map(); // connectionId -> playerId
 
   constructor(readonly room: Party.Room) {
     this.gameState = createInitialGameState(room.id);
@@ -105,7 +106,10 @@ export default class HangDrawServer implements Party.Server {
   }
 
   handleJoin(playerId: string, playerName: string, conn: Party.Connection) {
-    // Check if player already exists
+    // Track connection -> player mapping
+    this.connectionToPlayer.set(conn.id, playerId);
+
+    // Check if player already exists (reconnecting)
     const existingPlayer = this.gameState.players.find(p => p.id === playerId);
     if (existingPlayer) {
       this.broadcast();
@@ -226,6 +230,42 @@ export default class HangDrawServer implements Party.Server {
   }
 
   onClose(conn: Party.Connection) {
-    // Could handle player disconnect here
+    const playerId = this.connectionToPlayer.get(conn.id);
+    if (!playerId) return;
+
+    // Remove connection mapping
+    this.connectionToPlayer.delete(conn.id);
+
+    // Check if player has other active connections (multiple tabs)
+    const hasOtherConnections = Array.from(this.connectionToPlayer.values()).includes(playerId);
+    if (hasOtherConnections) return;
+
+    // Get leaving player's name before removing
+    const leavingPlayer = this.gameState.players.find(p => p.id === playerId);
+    const leavingName = leavingPlayer?.name || 'Opponent';
+
+    // Remove player from game
+    this.gameState.players = this.gameState.players.filter(p => p.id !== playerId);
+
+    // Reset game state
+    this.gameState.phase = 'waiting';
+    this.gameState.word = '';
+    this.gameState.revealedLetters = [];
+    this.gameState.guessedLetters = [];
+    this.gameState.wrongGuesses = 0;
+    this.gameState.wordSetterId = this.gameState.players[0]?.id || null;
+    this.gameState.guesserId = null;
+
+    // Update remaining player's role to word-setter
+    if (this.gameState.players.length === 1) {
+      this.gameState.players[0].role = 'word-setter';
+    }
+
+    // Notify remaining player
+    this.room.broadcast(JSON.stringify({ 
+      type: 'player-left', 
+      playerName: leavingName,
+      state: this.gameState 
+    }));
   }
 }

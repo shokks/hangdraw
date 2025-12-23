@@ -128,6 +128,8 @@ function GameRoom({ roomId }: { roomId: string }) {
     isWordSetter,
     isGuesser,
     isConnected,
+    playerLeft,
+    clearPlayerLeft,
     actions,
   } = usePartyGame({ roomId });
 
@@ -307,8 +309,37 @@ function GameRoom({ roomId }: { roomId: string }) {
               </div>
             </div>
 
+            {/* Player left dialog */}
+            <Dialog open={!!playerLeft} onOpenChange={() => clearPlayerLeft()}>
+              <DialogContent className="sm:max-w-sm text-center border-0 shadow-2xl">
+                <DialogHeader className="text-center pt-4">
+                  <DialogTitle className="text-2xl font-display font-bold text-stone-600">
+                    {playerLeft} left
+                  </DialogTitle>
+                  <DialogDescription className="text-stone-400 mt-1">
+                    Waiting for a new player to join...
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex gap-3 py-4">
+                  <Button
+                    variant="ghost"
+                    className="flex-1 text-stone-400"
+                    onClick={() => window.location.href = '/'}
+                  >
+                    Leave
+                  </Button>
+                  <Button
+                    className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                    onClick={() => clearPlayerLeft()}
+                  >
+                    Wait
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
             {/* Game over dialog */}
-            <Dialog open={isGameOver}>
+            <Dialog open={isGameOver && !playerLeft}>
               <DialogContent className="sm:max-w-sm text-center border-0 shadow-2xl">
                 <DialogHeader className="text-center pt-4">
                   <DialogTitle className={`text-3xl font-display font-bold ${iWon ? 'text-green-600' : 'text-stone-600'}`}>
