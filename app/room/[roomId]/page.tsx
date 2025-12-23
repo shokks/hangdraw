@@ -99,9 +99,9 @@ function WaitingForWord({ opponentName }: { opponentName?: string }) {
         </g>
       </svg>
 
-      {/* Opponent name */}
-      <p className="text-lg sm:text-xl font-display font-bold text-stone-700 mb-2">
-        {opponentName || 'Friend'}
+      {/* Opponent is setting word */}
+      <p className="text-lg sm:text-xl font-display font-bold text-stone-700 mb-1">
+        {opponentName || 'Friend'} is picking a word
       </p>
       
       {/* Rotating message */}
