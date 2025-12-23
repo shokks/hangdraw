@@ -24,6 +24,54 @@ const TIPS = [
   "Tip: Watch out for tricky words!",
 ];
 
+function NameInput({ onSubmit }: { onSubmit: (name: string) => void }) {
+  const [name, setName] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = name.trim();
+    if (trimmed.length >= 2) {
+      onSubmit(trimmed);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in px-4">
+      <div 
+        className="bg-white rounded-2xl px-6 py-8 sm:px-10 sm:py-10 w-full max-w-xs"
+        style={{ boxShadow: '0 -4px 20px -4px rgba(0,0,0,0.08), 0 4px 20px -4px rgba(0,0,0,0.08)' }}
+      >
+        <h2 className="text-xl sm:text-2xl font-display font-bold text-stone-800 text-center mb-2">
+          What's your name?
+        </h2>
+        <p className="text-sm text-stone-400 text-center mb-6">
+          So your friend knows who they're playing with
+        </p>
+        
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+            maxLength={12}
+            className="h-12 w-full rounded-xl border-2 border-stone-200 px-4 text-center text-lg font-display focus:border-primary focus:outline-none transition-colors"
+            autoFocus
+            autoComplete="off"
+          />
+          <button
+            type="submit"
+            disabled={name.trim().length < 2}
+            className="h-12 w-full rounded-xl bg-primary text-white font-semibold transition-all hover:bg-primary/90 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Join Game
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function WaitingForWord({ opponentName }: { opponentName?: string }) {
   const [messageIndex, setMessageIndex] = useState(0);
   
@@ -70,9 +118,8 @@ function WaitingForWord({ opponentName }: { opponentName?: string }) {
   );
 }
 
-export default function RoomPage({ params }: { params: Promise<{ roomId: string }> }) {
-  const { roomId } = use(params);
-
+// The actual game component - only renders after name is set
+function GameRoom({ roomId }: { roomId: string }) {
   const {
     gameState,
     playerId,
@@ -284,4 +331,42 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
       </div>
     </div>
   );
+}
+
+// Main page component - handles name input flow
+export default function RoomPage({ params }: { params: Promise<{ roomId: string }> }) {
+  const { roomId } = use(params);
+  const [hasName, setHasName] = useState<boolean | null>(null);
+
+  // Check for existing name on mount
+  useEffect(() => {
+    const existingName = sessionStorage.getItem('hangdraw-player-name');
+    setHasName(!!existingName);
+  }, []);
+
+  const handleNameSubmit = (name: string) => {
+    sessionStorage.setItem('hangdraw-player-name', name);
+    setHasName(true);
+  };
+
+  // Loading check
+  if (hasName === null) {
+    return (
+      <div className="bg-stone-50 flex items-center justify-center min-h-[calc(100vh-6.5rem)]">
+        <div className="w-8 h-8 rounded-full border-2 border-stone-200 border-t-primary animate-spin" />
+      </div>
+    );
+  }
+
+  // Name input screen
+  if (!hasName) {
+    return (
+      <div className="bg-stone-50 min-h-[calc(100vh-6.5rem)]">
+        <NameInput onSubmit={handleNameSubmit} />
+      </div>
+    );
+  }
+
+  // Main game
+  return <GameRoom roomId={roomId} />;
 }
