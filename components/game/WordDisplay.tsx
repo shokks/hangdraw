@@ -13,18 +13,23 @@ export function WordDisplay({ word, revealedLetters, gameOver }: WordDisplayProp
     <div className="flex flex-wrap justify-center gap-2">
       {letters.map((letter, index) => {
         const isRevealed = revealedLetters.includes(letter) || gameOver;
+        const wasNotGuessed = gameOver && !revealedLetters.includes(letter);
+
         return (
           <div
             key={index}
             className={`
               w-10 h-12 flex items-center justify-center
-              border-b-4 border-zinc-400 dark:border-zinc-600
-              text-2xl font-bold tracking-wide
-              ${isRevealed ? 'text-zinc-900 dark:text-zinc-50' : 'text-transparent'}
-              ${gameOver && !revealedLetters.includes(letter) ? 'text-red-500 dark:text-red-400' : ''}
+              border-b-2 font-display text-2xl font-bold
+              ${wasNotGuessed 
+                ? 'border-orange-500 text-orange-500' 
+                : isRevealed 
+                  ? 'border-stone-400 text-stone-800' 
+                  : 'border-stone-300 text-stone-300'
+              }
             `}
           >
-            {isRevealed ? letter : '_'}
+            {isRevealed ? letter : ''}
           </div>
         );
       })}

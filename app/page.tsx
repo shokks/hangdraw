@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 function generateRoomCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -29,63 +31,67 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-8">
-      <main className="flex flex-col items-center gap-8 max-w-md w-full">
+    <div className="flex min-h-screen flex-col items-center justify-center p-8 bg-background">
+      <main className="flex flex-col items-center gap-10 max-w-md w-full animate-fade-in">
         <div className="text-center">
-          <h1 className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 mb-2">
+          <h1 className="font-display text-5xl font-bold tracking-tight mb-3 text-foreground">
             HangDraw
           </h1>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400">
+          <p className="text-lg text-muted-foreground">
             Multiplayer Hangman with a twist
           </p>
         </div>
 
         <div className="flex flex-col gap-4 w-full max-w-xs">
-          <button
+          <Button
             onClick={handleCreateGame}
-            className="h-14 w-full rounded-xl bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-semibold text-lg transition-all hover:scale-105 hover:shadow-lg"
+            size="lg"
+            className="h-14 w-full rounded-2xl text-lg font-semibold bg-orange-500 hover:bg-orange-600 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             Create Game
-          </button>
+          </Button>
 
           {!showJoinInput ? (
-            <button
+            <Button
               onClick={() => setShowJoinInput(true)}
-              className="h-14 w-full rounded-xl border-2 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-semibold text-lg transition-all hover:border-zinc-500 hover:scale-105"
+              variant="outline"
+              size="lg"
+              className="h-14 w-full rounded-2xl text-lg font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Join Game
-            </button>
+            </Button>
           ) : (
-            <div className="flex flex-col gap-3">
-              <input
+            <div className="flex flex-col gap-3 animate-slide-up">
+              <Input
                 type="text"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                placeholder="Enter room code"
+                placeholder="ROOM CODE"
                 maxLength={6}
-                className="h-14 w-full rounded-xl border-2 border-zinc-300 dark:border-zinc-700 bg-transparent px-4 text-center text-xl font-mono tracking-widest placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none"
+                className="h-14 w-full rounded-2xl border-2 border-orange-500 px-4 text-center text-xl font-display tracking-[0.3em] focus-visible:ring-orange-500"
                 autoFocus
               />
-              <div className="flex gap-2">
-                <button
+              <div className="flex gap-3">
+                <Button
                   onClick={() => setShowJoinInput(false)}
-                  className="h-12 flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 font-medium transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  variant="ghost"
+                  className="h-12 flex-1 rounded-xl"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleJoinGame}
                   disabled={joinCode.trim().length < 4}
-                  className="h-12 flex-1 rounded-lg bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-medium transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                  className="h-12 flex-1 rounded-xl bg-orange-500 hover:bg-orange-600 transition-all hover:scale-[1.02] disabled:opacity-40"
                 >
                   Join
-                </button>
+                </Button>
               </div>
             </div>
           )}
         </div>
 
-        <p className="text-sm text-zinc-500 dark:text-zinc-500 text-center max-w-xs">
+        <p className="text-sm text-center max-w-xs text-muted-foreground">
           Create a game and share the room code with a friend to start playing!
         </p>
       </main>

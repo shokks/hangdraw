@@ -11,7 +11,7 @@ interface AlphabetGridProps {
 
 export function AlphabetGrid({ guessedLetters, correctLetters, onGuess, disabled }: AlphabetGridProps) {
   return (
-    <div className="grid grid-cols-9 gap-2 max-w-md mx-auto">
+    <div className="grid grid-cols-9 gap-1.5 max-w-sm mx-auto">
       {ALPHABET.map((letter) => {
         const isGuessed = guessedLetters.includes(letter);
         const isCorrect = correctLetters.includes(letter);
@@ -22,14 +22,15 @@ export function AlphabetGrid({ guessedLetters, correctLetters, onGuess, disabled
             onClick={() => onGuess(letter)}
             disabled={isGuessed || disabled}
             className={`
-              w-9 h-10 rounded-lg font-bold text-sm transition-all
-              ${isGuessed
-                ? isCorrect
-                  ? 'bg-green-500 text-white cursor-not-allowed'
-                  : 'bg-red-500/80 text-white cursor-not-allowed'
-                : 'bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 hover:scale-110'
+              w-8 h-9 rounded-lg font-display font-medium text-sm transition-all
+              ${isGuessed 
+                ? isCorrect 
+                  ? 'bg-orange-500 text-white' 
+                  : 'bg-stone-200 text-stone-400 line-through'
+                : 'bg-white text-stone-600 hover:bg-orange-50 hover:text-orange-600 hover:scale-105'
               }
-              ${disabled && !isGuessed ? 'opacity-50 cursor-not-allowed' : ''}
+              ${disabled && !isGuessed ? 'opacity-30 cursor-not-allowed' : ''}
+              ${isGuessed ? 'cursor-not-allowed' : 'cursor-pointer'}
             `}
           >
             {letter}

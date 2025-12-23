@@ -6,9 +6,9 @@ import { WaitingRoom } from '@/components/game/WaitingRoom';
 import { WordInput } from '@/components/game/WordInput';
 import { WordDisplay } from '@/components/game/WordDisplay';
 import { AlphabetGrid } from '@/components/game/AlphabetGrid';
-import { StatusBar } from '@/components/game/StatusBar';
-import { ScoreBoard } from '@/components/game/ScoreBoard';
 import { HangmanFigure } from '@/components/game/HangmanFigure';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 export default function RoomPage({ params }: { params: Promise<{ roomId: string }> }) {
   const { roomId } = use(params);
@@ -40,31 +40,32 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
 
   const isGameOver = phase === 'game-over';
   const didGuesserWin = isGameOver && word.split('').every(l => revealedLetters.includes(l));
+  const iWon = (isGuesser && didGuesserWin) || (isWordSetter && !didGuesserWin);
+
+  const opponent = players.find(p => p.id !== playerId);
+  const me = players.find(p => p.id === playerId);
 
   // Loading state
   if (!isConnected || !gameState) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 mx-auto mb-4 rounded-full border-4 border-zinc-300 border-t-zinc-900 animate-spin" />
-          <p className="text-zinc-500">Connecting to room...</p>
+          <div className="w-10 h-10 mx-auto mb-4 rounded-full border-3 border-stone-200 border-t-orange-500 animate-spin" />
+          <p className="text-stone-400 text-sm">Connecting...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-4">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-            HangDraw
-          </h1>
-          <div className="flex items-center gap-4">
-            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span className="px-3 py-1 bg-zinc-200 dark:bg-zinc-800 rounded-lg font-mono text-sm">
-              Room: {roomId}
-            </span>
+    <div className="min-h-screen bg-stone-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Simple header */}
+        <header className="flex items-center justify-between mb-8">
+          <h1 className="font-display text-xl font-bold text-stone-800">HangDraw</h1>
+          <div className="flex items-center gap-2">
+            <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+            <span className="font-display text-xs text-stone-400 tracking-widest">{roomId}</span>
           </div>
         </header>
 
@@ -78,97 +79,132 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
         )}
 
         {phase === 'word-setting' && isWordSetter && (
-          <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex items-center justify-center min-h-[70vh]">
             <WordInput onSubmit={actions.setWord} />
           </div>
         )}
 
         {phase === 'word-setting' && isGuesser && (
-          <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex items-center justify-center min-h-[70vh]">
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
-              <p className="text-xl text-zinc-500">
-                Opponent is setting the word...
-              </p>
+              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-stone-100 animate-pulse" />
+              <p className="text-stone-400">Waiting for word...</p>
             </div>
           </div>
         )}
 
         {(phase === 'playing' || phase === 'drawing' || phase === 'game-over') && (
-          <div className="space-y-6">
-            <ScoreBoard players={players} currentPlayerId={playerId} />
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="order-2 lg:order-1">
+          <div className="animate-fade-in">
+            {/* Minimal score display */}
+            <div className="flex items-center justify-center gap-8 mb-8 text-sm">
+              <div className="text-center">
+                <p className="text-stone-400 text-xs mb-1">{me?.name || 'You'}</p>
+                <p className="font-display text-2xl font-bold text-stone-800">{me?.score || 0}</p>
+              </div>
+              <span className="text-stone-300">—</span>
+              <div className="text-center">
+                <p className="text-stone-400 text-xs mb-1">{opponent?.name || 'Opponent'}</p>
+                <p className="font-display text-2xl font-bold text-stone-800">{opponent?.score || 0}</p>
+              </div>
+            </div>
+
+            {/* Main game area - clean layout */}
+            <div className="flex flex-col items-center gap-8">
+              {/* Word display - word-setter sees full word */}
+              <WordDisplay
+                word={word}
+                revealedLetters={isWordSetter ? word.toUpperCase().split('') : revealedLetters}
+                gameOver={isGameOver}
+              />
+
+              {/* Hangman figure with soft shadow */}
+              <div 
+                className="bg-white rounded-2xl p-6"
+                style={{ boxShadow: '0 -4px 20px -4px rgba(0,0,0,0.08), 0 4px 20px -4px rgba(0,0,0,0.08)' }}
+              >
                 <HangmanFigure
                   wrongGuesses={wrongGuesses}
                   isDrawingPhase={phase === 'drawing'}
                   canDraw={isWordSetter}
                   onPartClick={handlePartClick}
+                  isWaiting={phase === 'playing'}
                 />
               </div>
-              
-              <div className="order-1 lg:order-2 space-y-6">
-                <StatusBar
-                  role={currentPlayer?.role || 'guesser'}
-                  phase={phase}
-                  wrongGuesses={wrongGuesses}
-                  maxWrongGuesses={6}
+
+              {/* Role indicator with waiting animation */}
+              <p className="text-xs text-stone-400">
+                {isWordSetter ? (
+                  phase === 'drawing' ? (
+                    'Click the figure to draw'
+                  ) : (
+                    <span className="animate-dots">Waiting for guess</span>
+                  )
+                ) : (
+                  phase === 'drawing' ? (
+                    <span className="animate-dots">Opponent is drawing</span>
+                  ) : (
+                    'Your turn to guess'
+                  )
+                )}
+              </p>
+
+              {/* Alphabet grid - only for guesser */}
+              {isGuesser && (
+                <AlphabetGrid
+                  guessedLetters={guessedLetters}
+                  correctLetters={revealedLetters}
+                  onGuess={actions.guess}
+                  disabled={phase !== 'playing'}
                 />
-                
-                <div className="p-6 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                  <WordDisplay
-                    word={word}
-                    revealedLetters={revealedLetters}
-                    gameOver={isGameOver}
+              )}
+
+              {/* Remaining guesses - minimal */}
+              <div className="flex gap-1.5">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      i < (6 - wrongGuesses) ? 'bg-stone-300' : 'bg-orange-500'
+                    }`}
                   />
-                </div>
-                
-                <div className="p-6 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                  <AlphabetGrid
-                    guessedLetters={guessedLetters}
-                    correctLetters={revealedLetters}
-                    onGuess={actions.guess}
-                    disabled={!isGuesser || phase !== 'playing'}
-                  />
-                </div>
+                ))}
               </div>
             </div>
 
-            {isGameOver && (() => {
-              const iWon = (isGuesser && didGuesserWin) || (isWordSetter && !didGuesserWin);
-              return (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-zinc-900 rounded-2xl p-8 max-w-md w-full mx-4 text-center">
-                  <h2 className={`text-3xl font-bold mb-4 ${iWon ? 'text-green-500' : 'text-red-500'}`}>
-                    {iWon ? 'You Win!' : 'You Lose!'}
-                  </h2>
-                  <p className="text-zinc-500 mb-4">
-                    {didGuesserWin ? 'The word was guessed!' : 'The word was not guessed.'}
-                  </p>
-                  <p className="text-xl text-zinc-600 dark:text-zinc-400 mb-2">
-                    The word was:
-                  </p>
-                  <p className="text-3xl font-mono font-bold text-zinc-900 dark:text-zinc-50 mb-6">
+            {/* Game over dialog */}
+            <Dialog open={isGameOver}>
+              <DialogContent className="sm:max-w-sm text-center border-0 shadow-2xl">
+                <DialogHeader className="text-center pt-4">
+                  <DialogTitle className={`text-2xl font-display font-bold ${iWon ? 'text-green-600' : 'text-orange-500'}`}>
+                    {iWon ? 'You Win!' : 'You Lose'}
+                  </DialogTitle>
+                  <DialogDescription className="text-stone-400">
+                    {didGuesserWin ? 'Word guessed correctly' : 'Out of guesses'}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="py-6">
+                  <p className="text-xs text-stone-400 mb-2 uppercase tracking-wider">The word was</p>
+                  <p className="text-3xl font-display font-bold text-stone-800 tracking-widest">
                     {word}
                   </p>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => window.location.href = '/'}
-                      className="flex-1 h-12 rounded-lg border border-zinc-300 dark:border-zinc-700 font-medium transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                    >
-                      Leave
-                    </button>
-                    <button
-                      onClick={handlePlayAgain}
-                      className="flex-1 h-12 rounded-lg bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 font-medium transition-all hover:scale-105"
-                    >
-                      Play Again
-                    </button>
-                  </div>
                 </div>
-              </div>
-            );})()}
+                <div className="flex gap-3 pb-2">
+                  <Button
+                    variant="ghost"
+                    className="flex-1 text-stone-400"
+                    onClick={() => window.location.href = '/'}
+                  >
+                    Leave
+                  </Button>
+                  <Button
+                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                    onClick={handlePlayAgain}
+                  >
+                    Play Again
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         )}
       </div>

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Player } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface WaitingRoomProps {
   roomCode: string;
@@ -20,50 +22,46 @@ export function WaitingRoom({ roomCode, players, onStartGame, isHost }: WaitingR
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 p-8">
+    <div className="flex flex-col items-center gap-8 p-8 animate-fade-in">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">
+        <h2 className="text-2xl font-bold text-foreground mb-2">
           Waiting for Players
         </h2>
-        <p className="text-zinc-500">
+        <p className="text-muted-foreground">
           Share the room link with a friend to start playing
         </p>
       </div>
 
-      <div className="flex flex-col items-center gap-3">
-        <span className="text-sm text-zinc-500 uppercase tracking-wide">Room Code</span>
-        <button
-          onClick={copyRoomCode}
-          className="px-8 py-4 bg-zinc-100 dark:bg-zinc-800 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors group"
-        >
-          <span className="text-4xl font-mono font-bold tracking-[0.3em] text-zinc-900 dark:text-zinc-50">
+      <Card className="border-2 hover:border-orange-500/50 transition-colors cursor-pointer" onClick={copyRoomCode}>
+        <CardContent className="pt-6 pb-4 px-8 text-center">
+          <span className="text-sm text-muted-foreground uppercase tracking-wide">Room Code</span>
+          <p className="text-4xl font-display font-bold tracking-[0.3em] text-foreground mt-2">
             {roomCode}
-          </span>
-          <p className="text-xs text-zinc-500 mt-2 group-hover:text-zinc-700 dark:group-hover:text-zinc-300">
-            {copied ? 'Copied!' : 'Click to copy link'}
           </p>
-        </button>
-      </div>
+          <p className="text-xs text-muted-foreground mt-3">
+            {copied ? '✓ Copied!' : 'Click to copy link'}
+          </p>
+        </CardContent>
+      </Card>
 
       <div className="flex flex-col items-center gap-3 w-full max-w-xs">
-        <span className="text-sm text-zinc-500">Players ({players.length}/2)</span>
+        <span className="text-sm text-muted-foreground">Players ({players.length}/2)</span>
         <div className="flex flex-col gap-2 w-full">
           {players.map((player, index) => (
-            <div
-              key={player.id}
-              className="flex items-center justify-between p-3 bg-zinc-100 dark:bg-zinc-800 rounded-lg"
-            >
-              <span className="font-medium text-zinc-900 dark:text-zinc-50">
-                {player.name}
-              </span>
-              <span className="text-sm text-zinc-500">
-                Player {index + 1}
-              </span>
-            </div>
+            <Card key={player.id}>
+              <CardContent className="flex items-center justify-between p-4">
+                <span className="font-medium text-foreground">
+                  {player.name}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  Player {index + 1}
+                </span>
+              </CardContent>
+            </Card>
           ))}
           {players.length < 2 && (
-            <div className="flex items-center justify-center p-3 border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg">
-              <span className="text-zinc-400 animate-pulse">
+            <div className="flex items-center justify-center p-4 border-2 border-dashed border-border rounded-xl">
+              <span className="text-muted-foreground animate-pulse">
                 Waiting for opponent...
               </span>
             </div>
@@ -72,12 +70,13 @@ export function WaitingRoom({ roomCode, players, onStartGame, isHost }: WaitingR
       </div>
 
       {players.length === 2 && isHost && onStartGame && (
-        <button
+        <Button
           onClick={onStartGame}
-          className="h-14 px-8 rounded-xl bg-green-600 text-white font-semibold text-lg transition-all hover:scale-105 hover:bg-green-500"
+          size="lg"
+          className="h-14 px-8 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-lg font-semibold transition-all hover:scale-[1.02]"
         >
           Start Game
-        </button>
+        </Button>
       )}
     </div>
   );

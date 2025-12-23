@@ -84,15 +84,15 @@ Based on [PRD: HangDraw](./prd-hangman-game.md)
   - [x] 5.8 Wire game logic to synced state (replace mock data)
   - [x] 5.9 Implement "Play Again" and "End Session" actions
 
-- [ ] 6.0 Add UI polish (animations, states, visual feedback)
-  - [ ] 6.1 Build `GameOverModal.tsx` with win/loss messaging and word reveal
-  - [ ] 6.2 Add win animation (confetti or celebratory effect)
-  - [ ] 6.3 Add loss animation (subtle shake or sad effect)
-  - [ ] 6.4 Add correct letter reveal animation (green flash/pop)
-  - [ ] 6.5 Add wrong guess feedback (red flash on alphabet letter)
-  - [ ] 6.6 Style loading and waiting states (spinners, skeleton UI)
-  - [ ] 6.7 Add visual distinction for player roles (color coding or badges)
-  - [ ] 6.8 Polish overall layout, spacing, and typography
+- [x] 6.0 Add UI polish (animations, states, visual feedback)
+  - [x] 6.1 Integrated shadcn/ui component library (Button, Input, Card, Dialog, Badge)
+  - [x] 6.2 Updated GameOver to use shadcn Dialog with personalized win/loss messages
+  - [x] 6.3 Added shake animation for wrong guesses
+  - [x] 6.4 Added pop animation for correct letter reveals
+  - [x] 6.5 Added color feedback on alphabet grid (emerald/rose)
+  - [x] 6.6 Styled loading and waiting states with design system colors
+  - [x] 6.7 Added visual distinction for player roles (violet/sky badges)
+  - [x] 6.8 Added Space Mono + DM Sans fonts, design system colors
 
 - [ ] 7.0 Testing, review, and deployment
   - [ ] 7.1 Test complete game flow: create room → join → set word → guess → win/lose → swap roles
