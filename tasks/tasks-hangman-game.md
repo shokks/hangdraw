@@ -9,7 +9,7 @@ Based on [PRD: HangDraw](./prd-hangman-game.md)
 - `components/game/WordInput.tsx` - Word setter input component
 - `components/game/WordDisplay.tsx` - Displays blanks and revealed letters
 - `components/game/AlphabetGrid.tsx` - Letter selection grid for guessing
-- `components/game/GameCanvas.tsx` - tldraw canvas wrapper with permissions
+- `components/game/HangmanFigure.tsx` - SVG hangman with clickable body parts
 - `components/game/StatusBar.tsx` - Game status and turn indicator
 - `components/game/ScoreBoard.tsx` - Score tracking display
 - `components/game/WaitingRoom.tsx` - Waiting for player 2 UI
@@ -24,7 +24,7 @@ Based on [PRD: HangDraw](./prd-hangman-game.md)
 
 - Unit tests should be placed alongside the code files they test
 - Use `npm run test` or `npx jest [optional/path/to/test/file]` to run tests
-- This project uses Next.js App Router with tldraw for collaborative drawing
+- This project uses Next.js App Router with PartyKit for real-time sync
 - Frontend-first approach: build UI with mock data, then add real-time sync
 
 ## Instructions for Completing Tasks
@@ -35,54 +35,54 @@ Based on [PRD: HangDraw](./prd-hangman-game.md)
 
 ## Tasks
 
-- [ ] 0.0 Create feature branch
-  - [ ] 0.1 Create and checkout branch: `git checkout -b feature/hangdraw-mvp`
+- [x] 0.0 Create feature branch
+  - [x] 0.1 Create and checkout branch: `git checkout -b feature/hangdraw-mvp`
 
-- [ ] 1.0 Set up real-time infrastructure (WebSocket/sync layer)
-  - [ ] 1.1 Research sync options (Partykit, Liveblocks, tldraw sync, or custom WebSocket)
-  - [ ] 1.2 Install chosen sync provider dependencies
-  - [ ] 1.3 Create `lib/room.ts` with room creation and unique code generation
-  - [ ] 1.4 Create `hooks/useRoom.ts` for room connection management
-  - [ ] 1.5 Test real-time connection between two browser tabs
+- [x] 1.0 Set up real-time infrastructure (WebSocket/sync layer)
+  - [x] 1.1 Research sync options (Partykit, Liveblocks, tldraw sync, or custom WebSocket)
+  - [x] 1.2 Install chosen sync provider dependencies (partykit, partysocket, y-partykit, @tldraw/sync)
+  - [x] 1.3 Create PartyKit server (`party/index.ts`) with game state sync
+  - [x] 1.4 Create `hooks/usePartyGame.ts` for room connection management
+  - [x] 1.5 Test real-time connection between two browser tabs
 
-- [ ] 2.0 Build game lobby system (room creation, joining, waiting state)
-  - [ ] 2.1 Create home page (`app/page.tsx`) with "Create Game" and "Join Game" buttons
-  - [ ] 2.2 Create room route (`app/room/[roomId]/page.tsx`) as client component
-  - [ ] 2.3 Build `WaitingRoom.tsx` component showing room code and "waiting for player" state
-  - [ ] 2.4 Implement room creation flow (generate code, redirect to room)
-  - [ ] 2.5 Implement room joining flow (enter code, validate, join room)
-  - [ ] 2.6 Display connected players and assign Player 1 / Player 2 labels
-  - [ ] 2.7 Test lobby flow with mock data in browser
+- [x] 2.0 Build game lobby system (room creation, joining, waiting state)
+  - [x] 2.1 Create home page (`app/page.tsx`) with "Create Game" and "Join Game" buttons
+  - [x] 2.2 Create room route (`app/room/[roomId]/page.tsx`) as client component
+  - [x] 2.3 Build `WaitingRoom.tsx` component showing room code and "waiting for player" state
+  - [x] 2.4 Implement room creation flow (generate code, redirect to room)
+  - [x] 2.5 Implement room joining flow (enter code, validate, join room)
+  - [x] 2.6 Display connected players and assign Player 1 / Player 2 labels
+  - [x] 2.7 Test lobby flow with mock data in browser
 
-- [ ] 3.0 Build word setting and guessing UI components
-  - [ ] 3.1 Create `lib/types.ts` with GameState, Player, and Round interfaces
-  - [ ] 3.2 Build `WordInput.tsx` - input field for word-setter (3-15 letters, validation)
-  - [ ] 3.3 Build `WordDisplay.tsx` - shows blanks (`_`) and revealed letters
-  - [ ] 3.4 Build `AlphabetGrid.tsx` - clickable A-Z grid with disabled state for used letters
-  - [ ] 3.5 Build `StatusBar.tsx` - displays current role, turn status, wrong guess count
-  - [ ] 3.6 Build `ScoreBoard.tsx` - shows "Player 1: X | Player 2: Y" score
+- [x] 3.0 Build word setting and guessing UI components
+  - [x] 3.1 Create `lib/types.ts` with GameState, Player, and Round interfaces
+  - [x] 3.2 Build `WordInput.tsx` - input field for word-setter (3-15 letters, validation)
+  - [x] 3.3 Build `WordDisplay.tsx` - shows blanks (`_`) and revealed letters
+  - [x] 3.4 Build `AlphabetGrid.tsx` - clickable A-Z grid with disabled state for used letters
+  - [x] 3.5 Build `StatusBar.tsx` - displays current role, turn status, wrong guess count
+  - [x] 3.6 Build `ScoreBoard.tsx` - shows "Player 1: X | Player 2: Y" score
   - [ ] 3.7 Create `hooks/useGameState.ts` with mock game state for UI testing
-  - [ ] 3.8 Compose components in room page and test full UI layout
+  - [x] 3.8 Compose components in room page and test full UI layout
 
-- [ ] 4.0 Integrate tldraw for collaborative hangman drawing
-  - [ ] 4.1 Install tldraw: `npm install tldraw`
-  - [ ] 4.2 Create `GameCanvas.tsx` wrapper component with tldraw editor
-  - [ ] 4.3 Implement drawing permissions (read-only for guesser, draw for word-setter)
-  - [ ] 4.4 Add drawing prompt UI (e.g., "Draw the HEAD", "Draw the BODY")
-  - [ ] 4.5 Implement canvas clear/reset function for new rounds
-  - [ ] 4.6 Connect tldraw to sync provider for real-time collaboration
-  - [ ] 4.7 Test drawing sync between two browser tabs
+- [x] 4.0 Implement clickable SVG hangman figure
+  - [x] 4.1 Create `HangmanFigure.tsx` SVG component with all body parts
+  - [x] 4.2 Show body parts as gray/dashed placeholders initially
+  - [x] 4.3 Highlight next part in orange during drawing phase (word-setter only)
+  - [x] 4.4 Word-setter clicks body part to "draw" it (turns red/solid)
+  - [x] 4.5 Show "Click to draw: [PART]" prompt for word-setter
+  - [x] 4.6 Show "Opponent is drawing..." message for guesser
+  - [x] 4.7 Sync drawn state via PartyKit game state
 
-- [ ] 5.0 Implement core game logic (turns, win/loss, scoring, rounds)
-  - [ ] 5.1 Create `lib/game-logic.ts` with pure functions for game rules
-  - [ ] 5.2 Implement word validation (letters only, 3-15 characters)
-  - [ ] 5.3 Implement letter guess handler (check if in word, update revealed/wrong)
-  - [ ] 5.4 Implement win detection (all letters revealed)
-  - [ ] 5.5 Implement loss detection (6 wrong guesses)
-  - [ ] 5.6 Implement role swapping logic for new rounds
-  - [ ] 5.7 Implement score increment on round end
-  - [ ] 5.8 Wire game logic to synced state (replace mock data)
-  - [ ] 5.9 Implement "Play Again" and "End Session" actions
+- [x] 5.0 Implement core game logic (turns, win/loss, scoring, rounds)
+  - [x] 5.1 Create `lib/game-logic.ts` with pure functions for game rules
+  - [x] 5.2 Implement word validation (letters only, 3-15 characters)
+  - [x] 5.3 Implement letter guess handler (check if in word, update revealed/wrong)
+  - [x] 5.4 Implement win detection (all letters revealed)
+  - [x] 5.5 Implement loss detection (6 wrong guesses)
+  - [x] 5.6 Implement role swapping logic for new rounds
+  - [x] 5.7 Implement score increment on round end
+  - [x] 5.8 Wire game logic to synced state (replace mock data)
+  - [x] 5.9 Implement "Play Again" and "End Session" actions
 
 - [ ] 6.0 Add UI polish (animations, states, visual feedback)
   - [ ] 6.1 Build `GameOverModal.tsx` with win/loss messaging and word reveal
