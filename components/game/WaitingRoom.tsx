@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Player } from '@/lib/types';
-import { Button } from '@/components/ui/button';
 import { MessageCircle, Copy, Check } from 'lucide-react';
 
 interface WaitingRoomProps {
@@ -13,11 +12,74 @@ interface WaitingRoomProps {
   isHost?: boolean;
 }
 
+// Simple beep sound using Web Audio API
+function playJoinSound() {
+  try {
+    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+  } catch (e) {
+    console.log('Audio not supported');
+  }
+}
+
 export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, isHost }: WaitingRoomProps) {
   const [copied, setCopied] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const prevPlayerCount = useRef(players.length);
+  const hasAutoCopied = useRef(false);
+  
   const bothPlayersReady = players.length === 2;
-
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+
+  // Auto-copy link for host on first load
+  useEffect(() => {
+    if (isHost && !hasAutoCopied.current && shareUrl) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        setCopied(true);
+        hasAutoCopied.current = true;
+        setTimeout(() => setCopied(false), 3000);
+      }).catch(() => {});
+    }
+  }, [isHost, shareUrl]);
+
+  // Play sound and show celebration when second player joins
+  useEffect(() => {
+    if (players.length === 2 && prevPlayerCount.current === 1) {
+      playJoinSound();
+      setShowCelebration(true);
+      
+      // Start countdown after celebration
+      setTimeout(() => {
+        setCountdown(3);
+      }, 1500);
+    }
+    prevPlayerCount.current = players.length;
+  }, [players.length]);
+
+  // Countdown timer and auto-start
+  useEffect(() => {
+    if (countdown === null) return;
+    
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (countdown === 0 && isHost && onStartGame) {
+      onStartGame();
+    }
+  }, [countdown, isHost, onStartGame]);
   
   const copyRoomCode = async () => {
     await navigator.clipboard.writeText(shareUrl);
@@ -31,8 +93,33 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
     window.open(whatsappUrl, '_blank');
   };
 
+  // Countdown screen
+  if (countdown !== null && countdown > 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in px-4">
+        <p className="text-stone-400 text-sm mb-4">Get ready!</p>
+        <div className="text-8xl sm:text-9xl font-display font-bold text-primary animate-pulse">
+          {countdown}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in px-4">
+      {/* Celebration when friend joins */}
+      {showCelebration && bothPlayersReady && (
+        <div className="absolute inset-0 flex items-center justify-center bg-stone-50/90 z-10 animate-fade-in">
+          <div className="text-center animate-pop">
+            <div className="text-6xl mb-4">🎉</div>
+            <p className="text-2xl sm:text-3xl font-display font-bold text-primary">
+              Friend joined!
+            </p>
+            <p className="text-stone-400 mt-2">Starting soon...</p>
+          </div>
+        </div>
+      )}
+
       {/* Room code - the focal point */}
       <div 
         className="bg-white rounded-2xl px-8 py-6 sm:px-12 sm:py-8"
@@ -43,18 +130,25 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
         </p>
       </div>
 
+      {/* Auto-copied indicator for host */}
+      {isHost && copied && (
+        <p className="text-xs text-green-600 mt-2 animate-fade-in">
+          ✓ Link copied! Paste in WhatsApp
+        </p>
+      )}
+
       {/* Share buttons - icons only */}
       <div className="flex gap-2 mt-4">
         <button
           onClick={shareViaWhatsApp}
-          className="w-9 h-9 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center transition-all hover:scale-110"
+          className="w-9 h-9 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center transition-all hover:scale-110 active:scale-95"
           title="Share via WhatsApp"
         >
           <MessageCircle className="w-4 h-4" />
         </button>
         <button
           onClick={copyRoomCode}
-          className="w-9 h-9 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-600 flex items-center justify-center transition-all hover:scale-110"
+          className="w-9 h-9 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
           title="Copy link"
         >
           {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -94,20 +188,9 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
       {/* Status text */}
       <p className="text-xs text-stone-400 mt-6">
         {bothPlayersReady
-          ? isHost ? 'Ready to play!' : 'Waiting for host...'
-          : isHost ? 'Share link to invite opponent' : 'Waiting for opponent...'}
+          ? 'Starting...'
+          : isHost ? 'Paste link in WhatsApp to invite' : 'Waiting for friend...'}
       </p>
-
-      {/* Start button - only for host when ready */}
-      {bothPlayersReady && isHost && onStartGame && (
-        <Button
-          onClick={onStartGame}
-          size="lg"
-          className="mt-10 h-12 px-10 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-base font-semibold transition-all hover:scale-[1.02]"
-        >
-          Start Game
-        </Button>
-      )}
     </div>
   );
 }
