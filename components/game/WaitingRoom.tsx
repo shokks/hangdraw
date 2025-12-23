@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Player } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 
 interface WaitingRoomProps {
   roomCode: string;
@@ -14,6 +13,7 @@ interface WaitingRoomProps {
 
 export function WaitingRoom({ roomCode, players, onStartGame, isHost }: WaitingRoomProps) {
   const [copied, setCopied] = useState(false);
+  const bothPlayersReady = players.length === 2;
 
   const copyRoomCode = async () => {
     await navigator.clipboard.writeText(window.location.href);
@@ -21,80 +21,56 @@ export function WaitingRoom({ roomCode, players, onStartGame, isHost }: WaitingR
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const bothPlayersReady = players.length === 2;
-
   return (
-    <div className="flex flex-col items-center gap-8 p-8 animate-fade-in">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-foreground mb-2">
-          {bothPlayersReady 
-            ? 'Ready to Play!' 
-            : isHost 
-              ? 'Waiting for Opponent' 
-              : 'Joining Game...'}
-        </h2>
-        <p className="text-muted-foreground">
-          {bothPlayersReady
-            ? isHost 
-              ? 'Both players are here. Start the game!'
-              : 'Waiting for host to start the game...'
-            : isHost
-              ? 'Share the room link with a friend'
-              : 'Connected! Waiting for another player...'}
+    <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in">
+      {/* Room code - the focal point */}
+      <div 
+        onClick={copyRoomCode}
+        className="bg-white rounded-2xl px-12 py-8 cursor-pointer hover:scale-[1.02] transition-transform"
+        style={{ boxShadow: '0 -4px 20px -4px rgba(0,0,0,0.08), 0 4px 20px -4px rgba(0,0,0,0.08)' }}
+      >
+        <p className="text-5xl font-display font-bold tracking-[0.4em] text-stone-800 text-center">
+          {roomCode}
         </p>
       </div>
 
-      <Card className="border-2 hover:border-orange-500/50 transition-colors cursor-pointer" onClick={copyRoomCode}>
-        <CardContent className="pt-6 pb-4 px-8 text-center">
-          <span className="text-sm text-muted-foreground uppercase tracking-wide">Room Code</span>
-          <p className="text-4xl font-display font-bold tracking-[0.3em] text-foreground mt-2">
-            {roomCode}
-          </p>
-          <p className="text-xs text-muted-foreground mt-3">
-            {copied ? '✓ Copied!' : 'Click to copy link'}
-          </p>
-        </CardContent>
-      </Card>
+      {/* Copy hint */}
+      <p className="text-xs text-stone-400 mt-4">
+        {copied ? '✓ Link copied!' : 'Tap to copy invite link'}
+      </p>
 
-      <div className="flex flex-col items-center gap-3 w-full max-w-xs">
-        <span className="text-sm text-muted-foreground">Players ({players.length}/2)</span>
-        <div className="flex flex-col gap-2 w-full">
-          {players.map((player, index) => (
-            <Card key={player.id}>
-              <CardContent className="flex items-center justify-between p-4">
-                <span className="font-medium text-foreground">
-                  {player.name}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  Player {index + 1}
-                </span>
-              </CardContent>
-            </Card>
-          ))}
-          {players.length < 2 && (
-            <div className="flex items-center justify-center p-4 border-2 border-dashed border-border rounded-xl">
-              <span className="text-muted-foreground animate-pulse">
-                Waiting for opponent...
-              </span>
-            </div>
-          )}
-        </div>
+      {/* Players indicator */}
+      <div className="flex items-center gap-3 mt-10">
+        <div className={`w-3 h-3 rounded-full ${players.length >= 1 ? 'bg-orange-500' : 'bg-stone-200'}`} />
+        <div className={`w-3 h-3 rounded-full ${players.length >= 2 ? 'bg-orange-500' : 'bg-stone-200 animate-pulse'}`} />
       </div>
 
+      {/* Status text */}
+      <p className="text-sm text-stone-400 mt-3">
+        {bothPlayersReady
+          ? isHost ? 'Ready!' : 'Waiting for host...'
+          : isHost ? 'Share link to invite' : 'Waiting for opponent...'}
+      </p>
+
+      {/* Player names */}
+      <div className="flex items-center gap-4 mt-6 text-sm">
+        {players.map((player, i) => (
+          <span key={player.id} className="text-stone-600">
+            {player.name}
+            {i === 0 && <span className="text-stone-300 ml-1">(host)</span>}
+          </span>
+        ))}
+      </div>
+
+      {/* Start button - only for host when ready */}
       {bothPlayersReady && isHost && onStartGame && (
         <Button
           onClick={onStartGame}
           size="lg"
-          className="h-14 px-8 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-lg font-semibold transition-all hover:scale-[1.02]"
+          className="mt-10 h-12 px-10 rounded-xl bg-orange-500 hover:bg-orange-600 text-base font-semibold transition-all hover:scale-[1.02]"
         >
           Start Game
         </Button>
-      )}
-
-      {bothPlayersReady && !isHost && (
-        <p className="text-sm text-muted-foreground animate-pulse">
-          Waiting for host to start...
-        </p>
       )}
     </div>
   );
