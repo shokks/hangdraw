@@ -16,18 +16,25 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
   const [copied, setCopied] = useState(false);
   const bothPlayersReady = players.length === 2;
 
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  
   const copyRoomCode = async () => {
-    await navigator.clipboard.writeText(window.location.href);
+    await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const shareViaWhatsApp = () => {
+    const message = `Let's play HangDraw! Join my game: ${shareUrl}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in">
       {/* Room code - the focal point */}
       <div 
-        onClick={copyRoomCode}
-        className="bg-white rounded-2xl px-12 py-8 cursor-pointer hover:scale-[1.02] transition-transform"
+        className="bg-white rounded-2xl px-12 py-8"
         style={{ boxShadow: '0 -4px 20px -4px rgba(0,0,0,0.08), 0 4px 20px -4px rgba(0,0,0,0.08)' }}
       >
         <p className="text-5xl font-display font-bold tracking-[0.4em] text-stone-800 text-center">
@@ -35,10 +42,22 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
         </p>
       </div>
 
-      {/* Copy hint */}
-      <p className="text-xs text-stone-400 mt-4">
-        {copied ? '✓ Link copied!' : 'Tap to copy invite link'}
-      </p>
+      {/* Share buttons */}
+      <div className="flex gap-3 mt-6">
+        <Button
+          onClick={shareViaWhatsApp}
+          className="h-10 px-5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-sm font-medium transition-all hover:scale-[1.02]"
+        >
+          Share via WhatsApp
+        </Button>
+        <Button
+          onClick={copyRoomCode}
+          variant="outline"
+          className="h-10 px-5 rounded-xl text-sm font-medium transition-all hover:scale-[1.02]"
+        >
+          {copied ? '✓ Copied!' : 'Copy Link'}
+        </Button>
+      </div>
 
       {/* Versus display */}
       <div className="flex items-center gap-6 mt-12">
