@@ -48,7 +48,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   // Loading state
   if (!isConnected || !gameState) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+      <div className="bg-stone-50 flex items-center justify-center min-h-[calc(100vh-6.5rem)]">
         <div className="text-center">
           <div className="w-10 h-10 mx-auto mb-4 rounded-full border-3 border-stone-200 border-t-orange-500 animate-spin" />
           <p className="text-stone-400 text-sm">Connecting...</p>
@@ -58,16 +58,13 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 p-6">
+    <div className="bg-stone-50 p-4">
       <div className="max-w-4xl mx-auto">
-        {/* Simple header */}
-        <header className="flex items-center justify-between mb-8">
-          <h1 className="font-display text-xl font-bold text-stone-800">HangDraw</h1>
-          <div className="flex items-center gap-2">
-            <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span className="font-display text-xs text-stone-400 tracking-widest">{roomId}</span>
-          </div>
-        </header>
+        {/* Room code indicator */}
+        <div className="flex items-center justify-end gap-2 mb-4">
+          <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+          <span className="font-display text-xs text-stone-400 tracking-widest">{roomId}</span>
+        </div>
 
         {phase === 'waiting' && (
           <WaitingRoom

@@ -1,0 +1,60 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#FAFAF9"/>
+  
+  <!-- Subtle pattern -->
+  <defs>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#E7E5E4"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  
+  <!-- Logo background -->
+  <rect x="440" y="120" width="120" height="120" rx="28" fill="#F97316"/>
+  
+  <!-- Gallows in logo -->
+  <path 
+    d="M470 210 H495 M482 210 V145 H540 V158" 
+    stroke="white" 
+    stroke-width="6" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+    opacity="0.9"
+  />
+  
+  <!-- Head in logo -->
+  <circle cx="540" cy="172" r="12" stroke="white" stroke-width="6" fill="none"/>
+  
+  <!-- Body in logo -->
+  <line x1="540" y1="184" x2="540" y2="204" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- Arms in logo -->
+  <line x1="540" y1="190" x2="528" y2="198" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <line x1="540" y1="190" x2="552" y2="198" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- Legs in logo -->
+  <line x1="540" y1="204" x2="530" y2="220" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <line x1="540" y1="204" x2="550" y2="220" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- App name -->
+  <text x="600" y="320" font-family="monospace" font-size="72" font-weight="bold" fill="#1C1917" text-anchor="middle">
+    HangDraw
+  </text>
+  
+  <!-- Tagline -->
+  <text x="600" y="380" font-family="system-ui, sans-serif" font-size="32" fill="#78716C" text-anchor="middle">
+    Multiplayer Hangman with a twist
+  </text>
+  
+  <!-- CTA pill -->
+  <rect x="480" y="440" width="240" height="56" rx="28" fill="#F97316"/>
+  <text x="600" y="478" font-family="system-ui, sans-serif" font-size="24" font-weight="600" fill="white" text-anchor="middle">
+    Play with friends
+  </text>
+  
+  <!-- Creator credit -->
+  <text x="600" y="580" font-family="system-ui, sans-serif" font-size="18" fill="#A8A29E" text-anchor="middle">
+    Created by @5aikat
+  </text>
+</svg>

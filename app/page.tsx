@@ -31,13 +31,10 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-8 bg-background">
-      <main className="flex flex-col items-center gap-10 max-w-md w-full animate-fade-in">
+    <div className="flex flex-col items-center justify-center p-8 bg-stone-50 min-h-[calc(100vh-6.5rem)]">
+      <div className="flex flex-col items-center gap-10 max-w-md w-full animate-fade-in">
         <div className="text-center">
-          <h1 className="font-display text-5xl font-bold tracking-tight mb-3 text-foreground">
-            HangDraw
-          </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-stone-500">
             Multiplayer Hangman with a twist
           </p>
         </div>
@@ -91,10 +88,10 @@ export default function Home() {
           )}
         </div>
 
-        <p className="text-sm text-center max-w-xs text-muted-foreground">
+        <p className="text-sm text-center max-w-xs text-stone-400">
           Create a game and share the room code with a friend to start playing!
         </p>
-      </main>
+      </div>
     </div>
   );
 }
