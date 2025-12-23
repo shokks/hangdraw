@@ -14,6 +14,65 @@ function generateRoomCode(): string {
   return code;
 }
 
+function AnimatedHangman() {
+  return (
+    <svg viewBox="0 0 200 220" className="w-32 h-40 sm:w-40 sm:h-48">
+      {/* Gallows */}
+      <line x1="20" y1="200" x2="100" y2="200" stroke="#a8a29e" strokeWidth="3" strokeLinecap="round" />
+      <line x1="60" y1="200" x2="60" y2="20" stroke="#a8a29e" strokeWidth="3" strokeLinecap="round" />
+      <line x1="60" y1="20" x2="140" y2="20" stroke="#a8a29e" strokeWidth="3" strokeLinecap="round" />
+      <line x1="140" y1="20" x2="140" y2="40" stroke="#a8a29e" strokeWidth="3" strokeLinecap="round" />
+
+      {/* Body group - swaying */}
+      <g className="animate-sway" style={{ transformOrigin: '140px 40px' }}>
+        {/* Head */}
+        <circle cx="140" cy="60" r="20" fill="none" stroke="#f97316" strokeWidth="4" />
+        {/* Eyes - blinking */}
+        <g className="animate-pulse">
+          <circle cx="133" cy="57" r="2" fill="#f97316" />
+          <circle cx="147" cy="57" r="2" fill="#f97316" />
+        </g>
+        {/* Smile */}
+        <path d="M133 67 Q140 73 147 67" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" />
+        
+        {/* Body */}
+        <line x1="140" y1="80" x2="140" y2="130" stroke="#f97316" strokeWidth="4" strokeLinecap="round" />
+        
+        {/* Left Arm - swinging */}
+        <g style={{ transformOrigin: '140px 95px', animation: 'swing-left 2s ease-in-out infinite' }}>
+          <line x1="140" y1="95" x2="115" y2="120" stroke="#f97316" strokeWidth="4" strokeLinecap="round" />
+        </g>
+        
+        {/* Right Arm - swinging opposite */}
+        <g style={{ transformOrigin: '140px 95px', animation: 'swing-right 2s ease-in-out infinite' }}>
+          <line x1="140" y1="95" x2="165" y2="120" stroke="#f97316" strokeWidth="4" strokeLinecap="round" />
+        </g>
+        
+        {/* Left Leg - swinging */}
+        <g style={{ transformOrigin: '140px 130px', animation: 'swing-left 2.5s ease-in-out infinite' }}>
+          <line x1="140" y1="130" x2="115" y2="175" stroke="#f97316" strokeWidth="4" strokeLinecap="round" />
+        </g>
+        
+        {/* Right Leg - swinging opposite */}
+        <g style={{ transformOrigin: '140px 130px', animation: 'swing-right 2.5s ease-in-out infinite' }}>
+          <line x1="140" y1="130" x2="165" y2="175" stroke="#f97316" strokeWidth="4" strokeLinecap="round" />
+        </g>
+      </g>
+      
+      <style>{`
+        @keyframes swing-left {
+          0%, 100% { transform: rotate(5deg); }
+          50% { transform: rotate(-5deg); }
+        }
+        @keyframes swing-right {
+          0%, 100% { transform: rotate(-5deg); }
+          50% { transform: rotate(5deg); }
+        }
+      `}</style>
+    </svg>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
   const [joinCode, setJoinCode] = useState('');
@@ -32,7 +91,10 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center p-6 sm:p-8 bg-stone-50 min-h-[calc(100vh-5.5rem)] sm:min-h-[calc(100vh-6.5rem)]">
-      <div className="flex flex-col items-center gap-8 sm:gap-10 max-w-md w-full animate-fade-in">
+      <div className="flex flex-col items-center gap-6 sm:gap-8 max-w-md w-full animate-fade-in">
+        {/* Animated Hangman */}
+        <AnimatedHangman />
+        
         <div className="text-center">
           <p className="text-base sm:text-lg text-stone-500">
             Multiplayer Hangman with a twist
