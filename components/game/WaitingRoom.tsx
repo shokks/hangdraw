@@ -109,13 +109,16 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
     }
   };
 
+  // Get opponent name for celebration
+  const opponent = players.find(p => p.id !== currentPlayerId);
+
   // Countdown screen
-  if (countdown !== null && countdown > 0) {
+  if (countdown !== null) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in px-4">
         <p className="text-stone-400 text-sm mb-4">Get ready!</p>
         <div className="text-8xl sm:text-9xl font-display font-bold text-primary animate-pulse">
-          {countdown}
+          {countdown === 0 ? 'Go!' : countdown}
         </div>
       </div>
     );
@@ -129,12 +132,21 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
           <div className="text-center animate-pop">
             <div className="text-6xl mb-4">🎉</div>
             <p className="text-2xl sm:text-3xl font-display font-bold text-primary">
-              Friend joined!
+              {opponent?.name || 'Friend'} is here!
             </p>
-            <p className="text-stone-400 mt-2">Starting soon...</p>
+            <p className="text-stone-500 mt-2">Let's play!</p>
           </div>
         </div>
       )}
+
+      {/* Header message */}
+      <h2 className="text-lg sm:text-xl font-display font-bold text-stone-800 mb-6">
+        {bothPlayersReady 
+          ? 'Ready to play!' 
+          : isHost 
+            ? 'Invite a friend to play!' 
+            : 'Joining game...'}
+      </h2>
 
       {/* Room code - the focal point */}
       <div 
@@ -148,64 +160,64 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
 
       {/* Auto-copied indicator for host */}
       {isHost && copied && (
-        <p className="text-xs text-green-600 mt-2 animate-fade-in">
-          ✓ Link copied! Share with friend
+        <p className="text-xs text-green-600 mt-3 animate-fade-in">
+          ✓ Link copied! Send it to your friend
         </p>
       )}
 
       {/* Share buttons - icons only */}
-      <div className="flex gap-2 mt-4">
-        <button
-          onClick={shareGame}
-          className="w-9 h-9 rounded-full bg-primary hover:bg-primary/90 text-white flex items-center justify-center transition-all hover:scale-110 active:scale-95"
-          title="Share game link"
-        >
-          <Share2 className="w-4 h-4" />
-        </button>
-        <button
-          onClick={copyRoomCode}
-          className="w-9 h-9 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
-          title="Copy link"
-        >
-          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-        </button>
-      </div>
+      {isHost && !bothPlayersReady && (
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={shareGame}
+            className="w-9 h-9 rounded-full bg-primary hover:bg-primary/90 text-white flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+            title="Share game link"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={copyRoomCode}
+            className="w-9 h-9 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+            title="Copy link"
+          >
+            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          </button>
+        </div>
+      )}
 
       {/* Versus display */}
-      <div className="flex items-center gap-6 mt-12">
-        {/* Player 1 */}
+      <div className="flex items-center gap-8 mt-10">
+        {/* Player 1 (You) */}
         <div className="text-center">
-          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 1 ? 'bg-primary' : 'bg-stone-200'}`} />
-          {players[0] ? (
-            <p className="text-sm font-medium text-stone-700">
-              {players[0].id === currentPlayerId ? 'You' : players[0].name}
-            </p>
-          ) : (
-            <p className="text-sm text-stone-300">—</p>
-          )}
+          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 1 ? 'bg-green-500' : 'bg-stone-200'}`} />
+          <p className="text-sm font-medium text-stone-700">
+            {players[0]?.id === currentPlayerId ? 'You' : players[0]?.name || '—'}
+          </p>
         </div>
 
         {/* VS */}
         <span className="text-xs font-display text-stone-300 tracking-wider">vs</span>
 
-        {/* Player 2 */}
+        {/* Player 2 (Opponent) */}
         <div className="text-center">
-          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 2 ? 'bg-primary' : 'bg-stone-200 animate-pulse'}`} />
-          {players[1] ? (
+          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 2 ? 'bg-green-500' : 'bg-stone-300 animate-pulse'}`} />
+          {players.length >= 2 ? (
             <p className="text-sm font-medium text-stone-700">
-              {players[1].id === currentPlayerId ? 'You' : players[1].name}
+              {opponent?.id === currentPlayerId ? 'You' : opponent?.name}
             </p>
           ) : (
-            <p className="text-sm text-stone-300 animate-pulse">?</p>
+            <p className="text-sm text-stone-400 animate-pulse">waiting...</p>
           )}
         </div>
       </div>
 
       {/* Status text */}
-      <p className="text-xs text-stone-400 mt-6">
+      <p className="text-xs text-stone-400 mt-6 text-center max-w-xs">
         {bothPlayersReady
-          ? 'Starting...'
-          : isHost ? 'Tap share to invite friend' : 'Waiting for friend...'}
+          ? 'Both players connected!'
+          : isHost 
+            ? 'Share the link and wait for your friend to join' 
+            : 'Connecting you to your friend...'}
       </p>
     </div>
   );

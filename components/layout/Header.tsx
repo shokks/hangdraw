@@ -10,8 +10,18 @@ export function Header() {
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
+    // Read initial name
     const name = sessionStorage.getItem('hangdraw-player-name');
     setPlayerName(name);
+
+    // Listen for name changes (custom event from other components)
+    const handleNameChange = () => {
+      const updatedName = sessionStorage.getItem('hangdraw-player-name');
+      setPlayerName(updatedName);
+    };
+
+    window.addEventListener('hangdraw-name-changed', handleNameChange);
+    return () => window.removeEventListener('hangdraw-name-changed', handleNameChange);
   }, []);
 
   const handleRemoveName = () => {

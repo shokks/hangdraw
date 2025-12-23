@@ -346,6 +346,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
 
   const handleNameSubmit = (name: string) => {
     sessionStorage.setItem('hangdraw-player-name', name);
+    window.dispatchEvent(new Event('hangdraw-name-changed'));
     setHasName(true);
   };
 
