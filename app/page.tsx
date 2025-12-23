@@ -27,13 +27,16 @@ function AnimatedHangman() {
       <g className="animate-sway" style={{ transformOrigin: '140px 40px' }}>
         {/* Head */}
         <circle cx="140" cy="60" r="20" fill="none" stroke="#f97316" strokeWidth="4" />
-        {/* Eyes - blinking */}
-        <g className="animate-pulse">
-          <circle cx="133" cy="57" r="2" fill="#f97316" />
-          <circle cx="147" cy="57" r="2" fill="#f97316" />
+        {/* X Eyes - dizzy */}
+        <g>
+          <line x1="130" y1="53" x2="136" y2="59" stroke="#f97316" strokeWidth="2" strokeLinecap="round" />
+          <line x1="136" y1="53" x2="130" y2="59" stroke="#f97316" strokeWidth="2" strokeLinecap="round" />
+          <line x1="144" y1="53" x2="150" y2="59" stroke="#f97316" strokeWidth="2" strokeLinecap="round" />
+          <line x1="150" y1="53" x2="144" y2="59" stroke="#f97316" strokeWidth="2" strokeLinecap="round" />
         </g>
-        {/* Smile */}
-        <path d="M133 67 Q140 73 147 67" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" />
+        {/* Tongue sticking out */}
+        <path d="M136 68 Q140 75 144 68" fill="#f97316" stroke="#f97316" strokeWidth="1" />
+        <ellipse cx="140" cy="74" rx="4" ry="5" fill="#fb923c" className="animate-pulse" />
         
         {/* Body */}
         <line x1="140" y1="80" x2="140" y2="130" stroke="#f97316" strokeWidth="4" strokeLinecap="round" />
