@@ -67,7 +67,7 @@ export function WordInput({ onSubmit }: WordInputProps) {
           <Button
             type="submit"
             size="lg"
-            className="w-full bg-orange-500 hover:bg-orange-600 transition-all hover:scale-[1.02]"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-[1.02]"
           >
             Start Round
           </Button>

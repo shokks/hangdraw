@@ -44,7 +44,7 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
       <div className="flex items-center gap-6 mt-12">
         {/* Player 1 */}
         <div className="text-center">
-          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 1 ? 'bg-orange-500' : 'bg-stone-200'}`} />
+          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 1 ? 'bg-primary' : 'bg-stone-200'}`} />
           {players[0] ? (
             <p className="text-sm font-medium text-stone-700">
               {players[0].id === currentPlayerId ? 'You' : players[0].name}
@@ -59,7 +59,7 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
 
         {/* Player 2 */}
         <div className="text-center">
-          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 2 ? 'bg-orange-500' : 'bg-stone-200 animate-pulse'}`} />
+          <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${players.length >= 2 ? 'bg-primary' : 'bg-stone-200 animate-pulse'}`} />
           {players[1] ? (
             <p className="text-sm font-medium text-stone-700">
               {players[1].id === currentPlayerId ? 'You' : players[1].name}
@@ -82,7 +82,7 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
         <Button
           onClick={onStartGame}
           size="lg"
-          className="mt-10 h-12 px-10 rounded-xl bg-orange-500 hover:bg-orange-600 text-base font-semibold transition-all hover:scale-[1.02]"
+          className="mt-10 h-12 px-10 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-base font-semibold transition-all hover:scale-[1.02]"
         >
           Start Game
         </Button>

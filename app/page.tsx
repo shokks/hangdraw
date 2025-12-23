@@ -43,7 +43,7 @@ export default function Home() {
           <Button
             onClick={handleCreateGame}
             size="lg"
-            className="h-14 w-full rounded-2xl text-lg font-semibold bg-orange-500 hover:bg-orange-600 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="h-14 w-full rounded-2xl text-lg font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             Create Game
           </Button>
@@ -65,7 +65,7 @@ export default function Home() {
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                 placeholder="ROOM CODE"
                 maxLength={6}
-                className="h-14 w-full rounded-2xl border-2 border-orange-500 px-4 text-center text-xl font-display tracking-[0.3em] focus-visible:ring-orange-500"
+                className="h-14 w-full rounded-2xl border-2 border-primary px-4 text-center text-xl font-display tracking-[0.3em] focus-visible:ring-primary"
                 autoFocus
               />
               <div className="flex gap-3">
@@ -79,7 +79,7 @@ export default function Home() {
                 <Button
                   onClick={handleJoinGame}
                   disabled={joinCode.trim().length < 4}
-                  className="h-12 flex-1 rounded-xl bg-orange-500 hover:bg-orange-600 transition-all hover:scale-[1.02] disabled:opacity-40"
+                  className="h-12 flex-1 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:scale-[1.02] disabled:opacity-40"
                 >
                   Join
                 </Button>

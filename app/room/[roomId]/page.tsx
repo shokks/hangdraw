@@ -197,7 +197,7 @@ export default function RoomPage({ params }: { params: Promise<{ roomId: string 
                     Leave
                   </Button>
                   <Button
-                    className="flex-1 bg-orange-500 hover:bg-orange-600"
+                    className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                     onClick={handlePlayAgain}
                   >
                     Play Again

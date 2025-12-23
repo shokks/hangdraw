@@ -25,9 +25,9 @@ export function AlphabetGrid({ guessedLetters, correctLetters, onGuess, disabled
               w-8 h-9 rounded-lg font-display font-medium text-sm transition-all
               ${isGuessed 
                 ? isCorrect 
-                  ? 'bg-orange-500 text-white' 
+                  ? 'bg-primary text-primary-foreground' 
                   : 'bg-stone-200 text-stone-400 line-through'
-                : 'bg-white text-stone-600 hover:bg-orange-50 hover:text-orange-600 hover:scale-105'
+                : 'bg-white text-stone-600 hover:bg-primary/10 hover:text-primary hover:scale-105'
               }
               ${disabled && !isGuessed ? 'opacity-30 cursor-not-allowed' : ''}
               ${isGuessed ? 'cursor-not-allowed' : 'cursor-pointer'}
