@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Player } from '@/lib/types';
-import { MessageCircle, Copy, Check } from 'lucide-react';
+import { Share2, Copy, Check } from 'lucide-react';
 
 interface WaitingRoomProps {
   roomCode: string;
@@ -87,10 +87,26 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const shareViaWhatsApp = () => {
-    const message = `Let's play HangDraw! Join my game: ${shareUrl}`;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+  const shareGame = async () => {
+    const shareData = {
+      title: 'HangDraw',
+      text: "Let's play HangDraw!",
+      url: shareUrl,
+    };
+    
+    // Use native share if available (mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (e) {
+        // User cancelled or error - ignore
+      }
+    } else {
+      // Fallback to WhatsApp for desktop
+      const message = `Let's play HangDraw! Join my game: ${shareUrl}`;
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    }
   };
 
   // Countdown screen
@@ -133,18 +149,18 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
       {/* Auto-copied indicator for host */}
       {isHost && copied && (
         <p className="text-xs text-green-600 mt-2 animate-fade-in">
-          ✓ Link copied! Paste in WhatsApp
+          ✓ Link copied! Share with friend
         </p>
       )}
 
       {/* Share buttons - icons only */}
       <div className="flex gap-2 mt-4">
         <button
-          onClick={shareViaWhatsApp}
-          className="w-9 h-9 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center transition-all hover:scale-110 active:scale-95"
-          title="Share via WhatsApp"
+          onClick={shareGame}
+          className="w-9 h-9 rounded-full bg-primary hover:bg-primary/90 text-white flex items-center justify-center transition-all hover:scale-110 active:scale-95"
+          title="Share game link"
         >
-          <MessageCircle className="w-4 h-4" />
+          <Share2 className="w-4 h-4" />
         </button>
         <button
           onClick={copyRoomCode}
@@ -189,7 +205,7 @@ export function WaitingRoom({ roomCode, players, currentPlayerId, onStartGame, i
       <p className="text-xs text-stone-400 mt-6">
         {bothPlayersReady
           ? 'Starting...'
-          : isHost ? 'Paste link in WhatsApp to invite' : 'Waiting for friend...'}
+          : isHost ? 'Tap share to invite friend' : 'Waiting for friend...'}
       </p>
     </div>
   );
